@@ -54,11 +54,6 @@ def bad_example():
     #contains unrepresentable numbers
     return 0.1, 0.2, 0.3
 def float2bin(f):
-    ''' Convert float to 64-bit binary string.
-
-    Attributes:
-        :f: Float number to transform.
-    '''
     # [d] = struct.unpack(">Q", struct.pack(">d", f))
     # return f'{d:064b}'
     bits = struct.unpack('!Q', struct.pack('!d', f))[0]
