@@ -12,7 +12,7 @@ def getU():
     return u
 
 def find_machine_epsilon():
-    m = 1
+    m = 0
     u = 10 ** -m
 
     while (1.0 + u) != 1.0:  
@@ -54,16 +54,22 @@ def float2bin(f):
     return f'{unpacked:064b}'
 
 def random_numbers():
-    return random.uniform(0, 1),random.uniform(0, 1), random.uniform(0, 1)
+    d = random.uniform(0, 1)
+    e = random.uniform(0, 1)
+    f = random.uniform(0, 1)
+    print("d= ", float2bin(d))
+    print("e= ", float2bin(e))
+    print("f= ", float2bin(f))
+    return d, e, f
 def good_example():
-    #contains one representable number
+    #contains one representable number => asociative
     print('0.5 = ', float2bin(0.5))
     print('0.1 = ', float2bin(0.1))
     print('0.2 = ', float2bin(0.2))
     return 0.5, 0.1, 0.2
 def bad_example():
-    #contains unrepresentable numbers
-    print('0.75 = ', float2bin(0.75))
+    #contains unrepresentable numbers => non-asociative
+    print('0.1 = ', float2bin(0.1))
     print('0.2 = ', float2bin(0.2))
     print('0.3 = ', float2bin(0.3))
     return 0.1, 0.2, 0.3
