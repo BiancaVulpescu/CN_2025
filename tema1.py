@@ -141,54 +141,52 @@ def sinus():
         # p6 = P6(nr, c3, c4)
         # p7 = P7(nr, c1, c2, c3, c4, c5)
         # p8 = P8(nr, c1, c2, c3, c4, c5, c6)
-    
-        p1 = horner_evaluate([1, 0, -c1, 0, c2], nr)
-        p2 = horner_evaluate([1, 0, -c1, 0, c2, 0, -c3], nr)
-        p3 = horner_evaluate([1, 0, -c1, 0, c2, 0, -c3, 0, c4], nr)
-        p4 = horner_evaluate([1, 0, -0.166, 0, 0.00833, 0, -c3, 0, c4], nr)
-        p5 = horner_evaluate([1, 0, -0.1666, 0, 0.008333, 0, -c3, 0, c4], nr)
-        p6 = horner_evaluate([1, 0, -0.16666, 0, 0.0083333, 0, -c3, 0, c4], nr)
-        p7 = horner_evaluate([1, 0, -c1, 0, c2, 0, -c3, 0, c4, 0, -c5], nr)
-        p8 = horner_evaluate([1, 0, -c1, 0, c2, 0, -c3, 0, c4, 0, -c5, 0, c6], nr)
-
 
         errors = []
         start_time = time.time_ns()
+        p1 = horner_evaluate([1, 0, -c1, 0, c2], nr)
         errorp1 = abs(p1 - val_sin_exact)
         timep1 += time.time_ns()- start_time
         errors.append((1, errorp1))
         
         start_time = time.time_ns()
+        p2 = horner_evaluate([1, 0, -c1, 0, c2, 0, -c3], nr)
         errorp2 = abs(p2 - val_sin_exact)
         timep2 += time.time_ns()- start_time
         errors.append((2, errorp2))
 
         start_time = time.time_ns()
+        p3 = horner_evaluate([1, 0, -c1, 0, c2, 0, -c3, 0, c4], nr)
         errorp3 = abs(p3 - val_sin_exact)
         timep3 += time.time_ns()- start_time
         errors.append((3, errorp3))
 
         start_time = time.time_ns()
+        p4 = horner_evaluate([1, 0, -0.166, 0, 0.00833, 0, -c3, 0, c4], nr)
         errorp4 = abs(p4 - val_sin_exact)
         timep4 += time.time_ns()- start_time
         errors.append((4, errorp4))
 
         start_time = time.time_ns()
+        p5 = horner_evaluate([1, 0, -0.1666, 0, 0.008333, 0, -c3, 0, c4], nr)
         errorp5 = abs(p5 - val_sin_exact)
         timep5 += time.time_ns()- start_time
         errors.append((5, errorp5))
         
         start_time = time.time_ns()
+        p6 = horner_evaluate([1, 0, -0.16666, 0, 0.0083333, 0, -c3, 0, c4], nr)
         errorp6 = abs(p6 - val_sin_exact)
         timep6 += time.time_ns()- start_time
         errors.append((6, errorp6))
         
         start_time = time.time_ns()
+        p7 = horner_evaluate([1, 0, -c1, 0, c2, 0, -c3, 0, c4, 0, -c5], nr)
         errorp7 = abs(p7 - val_sin_exact)
         timep7 += time.time_ns()- start_time
         errors.append((7, errorp7))
         
         start_time = time.time_ns()
+        p8 = horner_evaluate([1, 0, -c1, 0, c2, 0, -c3, 0, c4, 0, -c5, 0, c6], nr)
         errorp8 = abs(p8 - val_sin_exact)
         timep8 += time.time_ns()- start_time
         errors.append((8, errorp8))
