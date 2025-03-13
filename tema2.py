@@ -1,17 +1,7 @@
 import numpy as np
 
 def lu_decomposition_with_custom_diagonals(A, dU, epsilon=1e-10):
-    """
-    Performs LU decomposition with custom diagonal elements for U.
-    - A: The input matrix (will be overwritten with L and U values)
-    - dU: Vector containing diagonal elements of U
     
-    The resulting decomposition stores:
-    - L's diagonal in the diagonal of A
-    - L's below-diagonal elements in the below-diagonal part of A
-    - U's above-diagonal elements in the above-diagonal part of A
-    - U's diagonal elements in the dU vector
-    """
     n = A.shape[0]
     success = True
     
@@ -25,7 +15,7 @@ def lu_decomposition_with_custom_diagonals(A, dU, epsilon=1e-10):
     
     # First row calculation (except diagonal) - special case
     for j in range(1, n):
-        A[0, j] = A[0, j] / A[0, 0]
+        A[0, j] = A[0, j] / A[0, 0]   # scoate u12 si u13
     
     # Process the remaining matrix
     for p in range(1, n):
@@ -57,12 +47,7 @@ def lu_decomposition_with_custom_diagonals(A, dU, epsilon=1e-10):
     return success
 
 def solve_lu_system_custom_diagonals(A, dU, b, epsilon=1e-10):
-    """
-    Solves a system LUx = b where L and U are stored in A and dU.
-    - A: Matrix containing L and U values
-    - dU: Vector containing diagonal elements of U
-    - b: Right-hand side vector
-    """
+
     n = A.shape[0]
     
     # Forward substitution (solving Ly = b)
@@ -110,12 +95,7 @@ def example_custom_diagonals():
     success = lu_decomposition_with_custom_diagonals(A, dU, epsilon)
     
     if success:
-        print("LU Decomposition successful")
-        
-        print("Combined LU matrix (A):")
-        print("- Below diagonal: elements of L")
-        print("- Diagonal: diagonal elements of L")
-        print("- Above diagonal: non-diagonal elements of U")
+       
         print(A)
         print("Diagonal elements of U (dU):", dU)
         
