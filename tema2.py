@@ -1,89 +1,89 @@
 import numpy as np
 
 def lu_decomposition_with_custom_diagonals(A, dU, epsilon=1e-10):
+    """
+    Performs LU decomposition with custom diagonal elements for U.
+    - A: The input matrix (will be overwritten with L and U values)
+    - dU: Vector containing diagonal elements of U
+    
+    The resulting decomposition stores:
+    - L's diagonal in the diagonal of A
+    - L's below-diagonal elements in the below-diagonal part of A
+    - U's above-diagonal elements in the above-diagonal part of A
+    - U's diagonal elements in the dU vector
+    """
     n = A.shape[0]
     success = True
     
     # Check if all elements in dU are non-zero
     if np.any(np.abs(dU) < epsilon):
-        return None, None, False
+        return False
     
-    # Make a copy of A to work with
-    A_work = A.copy()
+    # First column calculation - special case
+    for i in range(n):
+        A[i, 0] = A[i, 0] / dU[0]
     
-    # Initialize L and U matrices
-    L = np.zeros((n, n))
-    U = np.zeros((n, n))
+    # First row calculation (except diagonal) - special case
+    for j in range(1, n):
+        A[0, j] = A[0, j] / A[0, 0]
     
-    for p in range(n):
-        # Set the diagonal element of U
-        U[p, p] = dU[p]
-        
-        # For the first row/column
-        if p == 0:
-            # Calculate L elements for the first column
-            for i in range(n):
-                L[i, 0] = A_work[i, 0] / dU[0]
+    # Process the remaining matrix
+    for p in range(1, n):
+        # Calculate U elements for row p
+        for j in range(p, n):
+            sum_val = 0
+            for k in range(p):
+                sum_val += A[p, k] * A[k, j]
             
-            # Calculate U elements for the first row
-            for j in range(1, n):
-                U[0, j] = A_work[0, j] / L[0, 0]
-        else:
-            # Calculate the current row of U
-            for j in range(p, n):
-                sum_val = 0
-                for k in range(p):
-                    sum_val += L[p, k] * U[k, j]
-                if j == p:
-                    # For diagonal elements of L
-                    L[p, p] = (A_work[p, p] - sum_val) / dU[p]
-                else:
-                    # For other elements of U
-                    U[p, j] = (A_work[p, j] - sum_val) / L[p, p]
-            
-            # Calculate the current column of L
-            for i in range(p+1, n):
-                sum_val = 0
-                for k in range(p):
-                    sum_val += L[i, k] * U[k, p]
-                L[i, p] = (A_work[i, p] - sum_val) / dU[p]
+            if j == p:
+                # Calculate diagonal element of L
+                A[p, p] = (A[p, p] - sum_val) / dU[p]
+            else:
+                # Calculate non-diagonal element of U
+                A[p, j] = (A[p, j] - sum_val) / A[p, p]
         
-        # If the calculated L[p, p] is too small, decomposition fails
-        if abs(L[p, p]) < epsilon:
+        # Calculate L elements for column p
+        for i in range(p+1, n):
+            sum_val = 0
+            for k in range(p):
+                sum_val += A[i, k] * A[k, p]
+            A[i, p] = (A[i, p] - sum_val) / dU[p]
+        
+        # If the calculated L[p,p] is too small, decomposition fails
+        if abs(A[p, p]) < epsilon:
             success = False
             break
     
-    return L, U, success
+    return success
 
-def solve_lu_system_custom_diagonals(L, U, b, epsilon=1e-10):
-    n = L.shape[0]
+def solve_lu_system_custom_diagonals(A, dU, b, epsilon=1e-10):
+    """
+    Solves a system LUx = b where L and U are stored in A and dU.
+    - A: Matrix containing L and U values
+    - dU: Vector containing diagonal elements of U
+    - b: Right-hand side vector
+    """
+    n = A.shape[0]
     
     # Forward substitution (solving Ly = b)
     y = np.zeros(n)
     for i in range(n):
         sum_val = 0
         for j in range(i):
-            sum_val += L[i, j] * y[j]
-        if abs(L[i, i]) < epsilon:
-            print("Cannot perform division: L element too small")
-            return None
-        y[i] = (b[i] - sum_val) / L[i, i]
+            sum_val += A[i, j] * y[j]  # Using A for L values
+        y[i] = (b[i] - sum_val) / A[i, i]  # Using A[i,i] for L[i,i]
     
     # Backward substitution (solving Ux = y)
     x = np.zeros(n)
     for i in range(n-1, -1, -1):
         sum_val = 0
         for j in range(i+1, n):
-            sum_val += U[i, j] * x[j]
-        if abs(U[i, i]) < epsilon:
-            print("Cannot perform division: U element too small")
-            return None
-        x[i] = (y[i] - sum_val) / U[i, i]
-    
+            sum_val += A[i, j] * x[j]  # Using A for U values
+        x[i] = (y[i] - sum_val) / dU[i]  # Using dU[i] for U[i,i]
     return x
 
-def compute_residual_norm(A, x, b):
-    residual = np.dot(A, x) - b
+def compute_residual_norm(A_original, x, b):
+    residual = np.dot(A_original, x) - b
     return np.sqrt(np.sum(residual**2))
 
 def example_custom_diagonals():
@@ -106,26 +106,47 @@ def example_custom_diagonals():
         print("Cannot perform LU decomposition: diagonal elements too small")
         return
     
-    L, U, success = lu_decomposition_with_custom_diagonals(A, dU, epsilon)
+    # Perform LU decomposition (modifies A in place)
+    success = lu_decomposition_with_custom_diagonals(A, dU, epsilon)
     
     if success:
         print("LU Decomposition successful")
         
-        print("L (with custom diagonal):\n", L)
-        print("U (with custom diagonal):\n", U)
+        print("Combined LU matrix (A):")
+        print("- Below diagonal: elements of L")
+        print("- Diagonal: diagonal elements of L")
+        print("- Above diagonal: non-diagonal elements of U")
+        print(A)
+        print("Diagonal elements of U (dU):", dU)
+        
+        # Extract L and U for verification
+        L = np.zeros((n, n))
+        U = np.zeros((n, n))
+        
+        for i in range(n):
+            for j in range(n):
+                if i > j:  # Below diagonal - L elements
+                    L[i, j] = A[i, j]
+                elif i == j:  # Diagonal
+                    L[i, j] = A[i, j]
+                    U[i, j] = dU[i]
+                else:  # Above diagonal - U elements
+                    U[i, j] = A[i, j]
+        
+        print("\nExtracted L matrix:\n", L)
+        print("Extracted U matrix:\n", U)
         print("Verification L*U:\n", np.dot(L, U))
         print("Original A:\n", A_original)
-        print("dU after computation (might be adjusted):", dU)
         
         # Compare L*U with original A
         diff_norm = np.linalg.norm(np.dot(L, U) - A_original)
         print("Difference norm ||LU - A||:", diff_norm)
         
         # Solve the system
-        x = solve_lu_system_custom_diagonals(L, U, b, epsilon)
+        x = solve_lu_system_custom_diagonals(A, dU, b, epsilon)
         
         if x is not None:
-            print("Solution x:", x)
+            print("\nSolution x:", x)
             print("Verification A*x:", np.dot(A_original, x))
             
             # Calculate residual norm
