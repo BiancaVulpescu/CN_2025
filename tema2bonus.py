@@ -52,25 +52,47 @@ def reconstruct_A_from_LU(L_vec, U_vec, dU, n):
     A_reconstructed = np.zeros((n, n))
     for i in range(n):
         for j in range(n):
-            if i > j:
-                A_reconstructed[i, j] = L_vec[index_in_vector(i, j, n)]
-            elif i == j:
-                A_reconstructed[i, j] = L_vec[index_in_vector(i, i, n)] * dU[i]
-            else:
-                A_reconstructed[i, j] = U_vec[index_in_vector(i, j, n)]
+            sum_val = 0
+            for k in range(n):
+                L_val = L_vec[index_in_vector(i, k, n)] if i >= k else 0.0
+                U_val = U_vec[index_in_vector(k, j, n)] if k <= j else 0.0
+                if k == j:
+                    U_val = dU[k]
+                sum_val += L_val * U_val
+            A_reconstructed[i, j] = sum_val
     return A_reconstructed
 
 def example_optimized():
-    n = 3
-    A = np.array([
-        [4.0, 0.0, 5.0],
-        [1.0, 7.0, 2.0],
-        [2.0, 4.0, 6.0]
-    ])
-    A_original = A.copy()
-    dU = np.array([2.0, 4.0, 1.0])
-    b = np.array([6.0, 5.0, 12.0])
-    epsilon = 1e-10
+    print('Pentru random scrie \'random\', iar pentru exemplu mic scrie \'mic\'')
+    tip = input()
+    if(tip == 'random'):
+        print('Introduceti dimensiunea matricei:')
+        n = int(input())
+        print('Introduceti epsilon:')
+        epsilon = float(input())
+
+        #make a random matrix
+        A = np.random.rand(n, n) * 10  # Random matrix with values between 0 and 10
+        A_original = A.copy()  
+        # Generate random values for dU such that each element is greater than epsilon
+        dU = np.random.rand(n) * 10 + epsilon  # Random values between epsilon and 10 + epsilon
+        # Generate a random vector b of size n
+        b = np.random.rand(n) * 10  # Random values between 0 and 10
+    else: 
+        if(tip == 'mic'):
+            n = 3
+            A = np.array([
+                [4.0, 0.0, 5.0],
+                [1.0, 7.0, 2.0],
+                [2.0, 4.0, 6.0]
+            ])
+            A_original = A.copy()  # Keep original for verification
+            
+            # Custom diagonal for U
+            dU = np.array([2.0, 4.0, 1.0])
+            
+            b = np.array([6.0, 5.0, 12.0])
+            epsilon = 1e-10
     
     success, L_vec, U_vec = lu_decomposition_optimized(A, dU, epsilon)
     print("L_vec:", L_vec)
