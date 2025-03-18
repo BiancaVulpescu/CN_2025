@@ -22,6 +22,7 @@ def lu_decomposition_optimized(A, dU, epsilon=1e-10):
             sum_val = sum(L_vec[index_in_vector(i, k, n)] * U_vec[index_in_vector(k, j, n)] for k in range(i))
             if j == i:
                 L_vec[index_in_vector(i, i, n)] = (A[i, i] - sum_val) / dU[i]
+                U_vec[index_in_vector(i, i, n)] = dU[i]
             else:
                 U_vec[index_in_vector(i, j, n)] = (A[i, j] - sum_val) / L_vec[index_in_vector(i, i, n)]
         
