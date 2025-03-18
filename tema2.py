@@ -67,38 +67,44 @@ def solve_lu_system_custom_diagonals(A, dU, b, epsilon=1e-10):
         x[i] = (y[i] - sum_val) / dU[i]  # Using dU[i] for U[i,i]
     return x
 
-def compute_residual_norm(A_original, x, b):
-    residual = np.dot(A_original, x) - b
+def solve_lu_system_library(A, b):
+    x = np.linalg.solve(A, b)
+    return x
+
+def compute_residual_norm(residual):
     return np.sqrt(np.sum(residual**2))
 
 def example_custom_diagonals():
-    n = 3
-    A = np.array([
-        [4.0, 0.0, 4.0],
-        [1.0, 4.0, 2.0],
-        [2.0, 4.0, 6.0]
-    ])
-    A_original = A.copy()  # Keep original for verification
+    print('Introduceti dimensiunea matricei:')
+    n = int(input())
+    print('Introduceti epsilon:')
+    epsilon = float(input())
+
+    #make a random matrix
+    A = np.random.rand(n, n) * 10  # Random matrix with values between 0 and 10
+    A_original = A.copy()  
+    # Generate random values for dU such that each element is greater than epsilon
+    dU = np.random.rand(n) * 10 + epsilon  # Random values between epsilon and 10 + epsilon
+    # Generate a random vector b of size n
+    b = np.random.rand(n) * 10  # Random values between 0 and 10
     
-    # Custom diagonal for U
-    dU = np.array([2.0, 4.0, 1.0])
-    
-    b = np.array([6.0, 5.0, 12.0])
-    epsilon = 1e-10
-    
-    # Check if all dU elements are acceptable
     if np.any(np.abs(dU) < epsilon):
-        print("Cannot perform LU decomposition: diagonal elements too small")
+        print("Nu se poate face despompunerea LU cu valori mai mici decat epsilon.")
         return
     
-    # Perform LU decomposition (modifies A in place)
     success = lu_decomposition_with_custom_diagonals(A, dU, epsilon)
     
     if success:
        
         print(A)
         print("Diagonal elements of U (dU):", dU)
-        
+
+        detA = 1
+        for i in range(n):
+            detA *= A[i][i]
+        for i in dU:
+            detA *= i
+        print("Determinant of A:", detA)
         # Extract L and U for verification
         L = np.zeros((n, n))
         U = np.zeros((n, n))
@@ -118,22 +124,38 @@ def example_custom_diagonals():
         print("Verification L*U:\n", np.dot(L, U))
         print("Original A:\n", A_original)
         
-        # Compare L*U with original A
-        diff_norm = np.linalg.norm(np.dot(L, U) - A_original)
-        print("Difference norm ||LU - A||:", diff_norm)
+        # # Compare L*U with original A
+        # diff_norm = np.linalg.norm(np.dot(L, U) - A_original)
+        # print("Difference norm ||LU - A||:", diff_norm)
         
-        # Solve the system
         x = solve_lu_system_custom_diagonals(A, dU, b, epsilon)
         
         if x is not None:
             print("\nSolution x:", x)
-            print("Verification A*x:", np.dot(A_original, x))
             
             # Calculate residual norm
-            residual_norm = compute_residual_norm(A_original, x, b)
+            residual = np.dot(A, x) - b
+            residual_norm = compute_residual_norm(residual)
+
             print("Residual norm ||Ax - b||₂:", residual_norm)
+
+
+            x_lib = solve_lu_system_library(A_original, b)
+            print('Solutia folosind biblioteca numpy: ', x_lib)
+            residual = x-x_lib
+            residual_norm = compute_residual_norm(residual)
+            print("Residual norm ||x - x_lib||₂:", residual)
+
+
+
         else:
             print("Failed to solve the system")
+        A_inv = np.linalg.inv(A)
+        print("Inversa lui A este: ", A_inv)
+
+        residual = x - np.dot(A_inv, b)
+        residual_norm = compute_residual_norm(residual)
+        print("Residual norm ||x - A_inv*b||₂:", residual)
     else:
         print("LU Decomposition failed")
 
