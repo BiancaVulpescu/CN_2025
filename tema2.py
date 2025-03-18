@@ -75,19 +75,36 @@ def compute_residual_norm(residual):
     return np.sqrt(np.sum(residual**2))
 
 def example_custom_diagonals():
-    print('Introduceti dimensiunea matricei:')
-    n = int(input())
-    print('Introduceti epsilon:')
-    epsilon = float(input())
+    print('Pentru random scrie \'random\', iar pentru exemplu mic scrie \'mic\'')
+    tip = input()
+    if(tip == 'random'):
+        print('Introduceti dimensiunea matricei:')
+        n = int(input())
+        print('Introduceti epsilon:')
+        epsilon = float(input())
 
-    #make a random matrix
-    A = np.random.rand(n, n) * 10  # Random matrix with values between 0 and 10
-    A_original = A.copy()  
-    # Generate random values for dU such that each element is greater than epsilon
-    dU = np.random.rand(n) * 10 + epsilon  # Random values between epsilon and 10 + epsilon
-    # Generate a random vector b of size n
-    b = np.random.rand(n) * 10  # Random values between 0 and 10
-    
+        #make a random matrix
+        A = np.random.rand(n, n) * 10  # Random matrix with values between 0 and 10
+        A_original = A.copy()  
+        # Generate random values for dU such that each element is greater than epsilon
+        dU = np.random.rand(n) * 10 + epsilon  # Random values between epsilon and 10 + epsilon
+        # Generate a random vector b of size n
+        b = np.random.rand(n) * 10  # Random values between 0 and 10
+    else: 
+        if(tip == 'mic'):
+            n = 3
+            A = np.array([
+                [4.0, 0.0, 4.0],
+                [1.0, 4.0, 2.0],
+                [2.0, 4.0, 6.0]
+            ])
+            A_original = A.copy()  # Keep original for verification
+            
+            # Custom diagonal for U
+            dU = np.array([2.0, 4.0, 1.0])
+            
+            b = np.array([6.0, 5.0, 12.0])
+            epsilon = 1e-10
     if np.any(np.abs(dU) < epsilon):
         print("Nu se poate face despompunerea LU cu valori mai mici decat epsilon.")
         return
@@ -134,28 +151,27 @@ def example_custom_diagonals():
             print("\nSolution x:", x)
             
             # Calculate residual norm
-            residual = np.dot(A, x) - b
+            residual = np.dot(A_original, x) - b
             residual_norm = compute_residual_norm(residual)
-
             print("Residual norm ||Ax - b||₂:", residual_norm)
 
 
             x_lib = solve_lu_system_library(A_original, b)
             print('Solutia folosind biblioteca numpy: ', x_lib)
-            residual = x-x_lib
+            residual = np.subtract(x,x_lib)
             residual_norm = compute_residual_norm(residual)
-            print("Residual norm ||x - x_lib||₂:", residual)
+            print("Residual norm ||x - x_lib||₂:", residual_norm)
 
 
 
         else:
             print("Failed to solve the system")
-        A_inv = np.linalg.inv(A)
+        A_inv = np.linalg.inv(A_original)
         print("Inversa lui A este: ", A_inv)
 
-        residual = x - np.dot(A_inv, b)
+        residual = np.subtract(x,np.dot(A_inv, b))
         residual_norm = compute_residual_norm(residual)
-        print("Residual norm ||x - A_inv*b||₂:", residual)
+        print("Residual norm ||x - A_inv*b||₂:", residual_norm)
     else:
         print("LU Decomposition failed")
 
