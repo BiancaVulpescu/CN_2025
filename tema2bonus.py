@@ -24,16 +24,20 @@ def descompunere_LU_optimizata(A, dU, epsilon=1e-15):
             
             #elementul de pe diagonala principala
             if j == i:
+                if np.any(np.abs(dU[i]) < epsilon):
+                    return False, L_vec, U_vec
                 L_vec[index_in_vector(i, i)] = (A[i, i] - sum_val) / dU[i]
                 U_vec[index_in_vector(i, i)] = dU[i]
             else:
-                # if(abs(L_vec[index_in_vector(i, i)]) < epsilon):
-                #     return False, L_vec, U_vec
+                if np.any(np.abs(L_vec[index_in_vector(i, i)]) < epsilon):
+                    return False, L_vec, U_vec
                 U_vec[index_in_vector(i, j)] = (A[i, j] - sum_val) / L_vec[index_in_vector(i, i)]
         
         #calcul pentru L (coltul stanga jos)
         for k in range(i + 1, n):
             sum_val = sum(L_vec[index_in_vector(k, j)] * U_vec[index_in_vector(j, i)] for j in range(i))
+            if np.any(np.abs(dU[i]) < epsilon):
+                    return False, L_vec, U_vec
             L_vec[index_in_vector(k, i)] = (A[k, i] - sum_val) / dU[i]
         
         if abs(L_vec[index_in_vector(i, i)]) < epsilon:
@@ -42,13 +46,15 @@ def descompunere_LU_optimizata(A, dU, epsilon=1e-15):
     
     return success, L_vec, U_vec
 
-def rezolvare_x_optimizata(L_vec, U_vec, dU, b, n):
+def rezolvare_x_optimizata(L_vec, U_vec, dU, b, n, epsilon=1e-15):
     # substitutia directa (Ly = b)
     y = np.zeros(n)
     for i in range(n):
         sum_val = 0
         # for j in range(i):
         sum_val = sum(L_vec[index_in_vector(i, j)] * y[j] for j in range(i))
+        if np.any(np.abs(L_vec[index_in_vector(i, i)]) < epsilon):
+                    return False, L_vec, U_vec
         y[i] = (b[i] - sum_val) / L_vec[index_in_vector(i, i)]
     
     # substitutia inversa (Ux = y)
@@ -57,6 +63,8 @@ def rezolvare_x_optimizata(L_vec, U_vec, dU, b, n):
         sum_val = 0
         # for j in range(i+1, n):
         sum_val = sum(U_vec[index_in_vector(i, j)] * x[j] for j in range(i+1, n))
+        if np.any(np.abs(dU[i]) < epsilon):
+                    return False, L_vec, U_vec
         x[i] = (y[i] - sum_val) / dU[i]
     
     return x

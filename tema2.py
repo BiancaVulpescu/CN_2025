@@ -11,6 +11,8 @@ def descompunerea_LU(A, dU, epsilon=1e-15):
     
     # calculul primei coloane din L
     for i in range(n):
+        if np.any(np.abs(dU[0]) < epsilon):
+            return False
         A[i, 0] = A[i, 0] / dU[0] # scoate l00, l10, l20 
     
     # calculul primei linii din U fara diagonala
@@ -29,6 +31,8 @@ def descompunerea_LU(A, dU, epsilon=1e-15):
             
             if j == p:
                 # calculeaza elementul de pe diagonala de pe L
+                if np.any(np.abs(dU[p]) < epsilon):
+                    return False
                 A[p, p] = (A[p, p] - sum_val) / dU[p]
             else:
                 # calculeaza elementele de pe linia p de pe U
@@ -42,6 +46,8 @@ def descompunerea_LU(A, dU, epsilon=1e-15):
             sum_val = 0
             for k in range(p):
                 sum_val += A[i, k] * A[k, p]
+            if np.any(np.abs(dU[p]) < epsilon):
+                    return False
             A[i, p] = (A[i, p] - sum_val) / dU[p]
         
         # test final de verificare a elementului de pe diagonala impartirea la 0
@@ -61,6 +67,8 @@ def rezolvare_sistem(A, dU, b, epsilon=1e-15):
         sum_val = 0
         for j in range(i):
             sum_val += A[i, j] * y[j] 
+        if np.any(np.abs(A[i,i]) < epsilon):
+                    return False
         y[i] = (b[i] - sum_val) / A[i, i]  
     
     # substitutia inversa (Ux = y)
@@ -69,6 +77,8 @@ def rezolvare_sistem(A, dU, b, epsilon=1e-15):
         sum_val = 0
         for j in range(i+1, n):
             sum_val += A[i, j] * x[j]  
+        if np.any(np.abs(dU[i]) < epsilon):
+                    return False
         x[i] = (y[i] - sum_val) / dU[i]  
     return x
 
@@ -110,8 +120,8 @@ def example_custom_diagonals():
         if(tip == 'mic'):
             n = 3
             A = np.array([
-                [4.0, 0.0, 5.0],
-                [1.0, 7.0, 2.0],
+                [4.0, 0.0, 4.0],
+                [1.0, 4.0, 2.0],
                 [2.0, 4.0, 6.0]
             ])
             A_original = A.copy()  
