@@ -11,7 +11,7 @@ def descompunerea_LU(A, dU, epsilon=1e-15):
     
     # calculul primei coloane din L
     for i in range(n):
-        A[i, 0] = A[i, 0] / dU[0]
+        A[i, 0] = A[i, 0] / dU[0] # scoate l00, l10, l20 
     
     # calculul primei linii din U fara diagonala
     for j in range(1, n):
@@ -37,7 +37,7 @@ def descompunerea_LU(A, dU, epsilon=1e-15):
                 else:
                     A[p, j] = (A[p, j] - sum_val) / A[p, p]
         
-        # calculeaza elementele din L pe coloana p pana la diagonala
+        # calculeaza elementele din L pe coloana p 
         for i in range(p+1, n):
             sum_val = 0
             for k in range(p):

@@ -27,6 +27,8 @@ def descompunere_LU_optimizata(A, dU, epsilon=1e-15):
                 L_vec[index_in_vector(i, i)] = (A[i, i] - sum_val) / dU[i]
                 U_vec[index_in_vector(i, i)] = dU[i]
             else:
+                # if(abs(L_vec[index_in_vector(i, i)]) < epsilon):
+                #     return False, L_vec, U_vec
                 U_vec[index_in_vector(i, j)] = (A[i, j] - sum_val) / L_vec[index_in_vector(i, i)]
         
         #calcul pentru L (coltul stanga jos)
@@ -45,16 +47,16 @@ def rezolvare_x_optimizata(L_vec, U_vec, dU, b, n):
     y = np.zeros(n)
     for i in range(n):
         sum_val = 0
-        for j in range(i):
-            sum_val = sum(L_vec[index_in_vector(i, j)] * y[j] )
+        # for j in range(i):
+        sum_val = sum(L_vec[index_in_vector(i, j)] * y[j] for j in range(i))
         y[i] = (b[i] - sum_val) / L_vec[index_in_vector(i, i)]
     
     # substitutia inversa (Ux = y)
     x = np.zeros(n)
     for i in range(n-1, -1, -1):
         sum_val = 0
-        for j in range(i+1, n):
-            sum_val = sum(U_vec[index_in_vector(i, j)] * x[j] )
+        # for j in range(i+1, n):
+        sum_val = sum(U_vec[index_in_vector(i, j)] * x[j] for j in range(i+1, n))
         x[i] = (y[i] - sum_val) / dU[i]
     
     return x
