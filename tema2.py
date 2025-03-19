@@ -110,8 +110,8 @@ def example_custom_diagonals():
         if(tip == 'mic'):
             n = 3
             A = np.array([
-                [4.0, 0.0, 4.0],
-                [1.0, 4.0, 2.0],
+                [4.0, 0.0, 5.0],
+                [1.0, 7.0, 2.0],
                 [2.0, 4.0, 6.0]
             ])
             A_original = A.copy()  
