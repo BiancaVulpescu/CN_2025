@@ -28,8 +28,15 @@ def citire_matrice_rara(nume_fisier):
 
     return n, d, rare
 
+def verif_diag_elem_nenule(d, n):
+    if len(d)!= n:
+        return False
+    return True
+
 # Exemplu de utilizare:
+eps = 1e-15
 n, d, rare = citire_matrice_rara("tema3files/a_test.txt")
+verif_diag_elem_nenule(d, n)
 
 # Afișare pentru verificare
 print("Dimensiune:", n)
