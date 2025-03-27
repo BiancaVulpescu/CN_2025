@@ -5,7 +5,7 @@ def citire_matrice_rara(nume_fisier):
         
         # Inițializăm vectorul diagonal și dicționarul pentru elementele nenule
         d = [0] * n
-        rare = {i: [] for i in range(n)}
+        rare = {i: {} for i in range(n)}
 
         # Citim fiecare element nenul
         for linie in f:
@@ -16,9 +16,15 @@ def citire_matrice_rara(nume_fisier):
             val, i, j = float(val), int(i), int(j)  # Convertim la tipurile corecte
 
             if i == j:
-                d[i] = val  # Element diagonal
+                d[i] += val  # Element diagonal
             else:
-                rare[i].append((val, j))  # Element nenul non-diagonal
+                if j in rare[i]:
+                    rare[i][j] += val  # Adunăm valorile pentru aceiași indici
+                else:
+                    rare[i][j] = val  # Adăugăm o nouă valoare
+    # Convertim dicționarele rare[i] în liste de tupluri pentru consistență
+    for i in range(n):
+        rare[i] = [(val, j) for j, val in rare[i].items()]
 
     return n, d, rare
 
