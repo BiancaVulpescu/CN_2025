@@ -1,5 +1,5 @@
 import numpy as np
-def citire_matrice_rara(nume_fisier):
+def citire_matrice_met1(nume_fisier):
     with open(nume_fisier, "r") as f:
         # Citim dimensiunea matricei
         n = int(f.readline().strip())
@@ -34,15 +34,13 @@ def verif_diag_elem_nenule(d, n):
         return False
     return True
 
-def read_sparse_matrix(file_path):
-    """Reads a sparse matrix from a file and stores it in compressed row format."""
+def citire_matrice_met2(file_path):
     valori = []  # Store non-zero values
     ind_col = []  # Store column indices
     inceput_linii = [0]  # Start positions for each row (0-based indexing)
     
     with open(file_path, 'r') as file:
         n = int(file.readline().strip())  # Read matrix dimension
-        current_row = 0
         element_count = 0
         row_data = {}  # Temporary dictionary to store values for each row
 
@@ -61,28 +59,99 @@ def read_sparse_matrix(file_path):
         print(row_data)
         # Process the row data into compressed row format
         for i in range(n):
-            inceput_linii.append(element_count)
             if i in row_data:
                 for j, val in sorted(row_data[i].items()):
                     valori.append(val)
                     ind_col.append(j)
                     element_count += 1
+                inceput_linii.append(element_count)
             
     
     return n, valori, ind_col, inceput_linii
 
+
+def gauss_seidel_sparse_crs(n, valori, ind_col, inceput_linii, b, tol=1e-10, max_iter=10000):
+    x = np.zeros(n)  # Inițializare cu zero
+    k = 0  # Contor pentru numărul de iterații
+    
+    while k < max_iter:
+        x_old = x.copy()
+        
+        for i in range(n):
+            suma = 0.0
+            diag = 0.0
+            
+            for idx in range(inceput_linii[i], inceput_linii[i+1]):
+                j = ind_col[idx]
+                val = valori[idx]
+                
+                if j == i:
+                    diag = val  # Element diagonal
+                else:
+                    suma += val * x[j]  # Elemente non-diagonale
+            
+            if diag == 0:
+                raise ValueError("Element diagonal zero. Metoda Gauss-Seidel nu poate fi aplicată.")
+            
+            x[i] = (b[i] - suma) / diag  # Actualizare Gauss-Seidel
+        k += 1
+        
+        # Verificare criteriu de oprire ||x - x_old|| < tol
+        if np.linalg.norm(x - x_old, ord=np.inf) < tol:
+            break
+    
+    return x, k
+
+def gauss_seidel_sparse_dict(n, d, rare, b, tol=1e-10, max_iter=10000):
+    x = np.array([1.0, 2.0, 3.0, 4.0, 5.0])  # Inițializare cu valori specificate
+    
+    k = 0  # Contor pentru numărul de iterații
+    
+    while k < max_iter:
+        x_old = x.copy()
+        
+        for i in range(n):
+            suma = 0.0
+            diag = d[i]
+            for val, j in rare[i]:
+                if j != i:
+                    suma += val * x[j]  # Elemente non-diagonale
+            if diag == 0:
+                raise ValueError("Element diagonal zero. Metoda Gauss-Seidel nu poate fi aplicată.")
+            x[i] = (b[i] - suma) / diag  # Actualizare Gauss-Seidel
+            print(f"Iteratia {k}, {x}")
+        
+        k += 1
+        
+        # Verificare criteriu de oprire ||x - x_old|| < tol
+        if np.linalg.norm(x - x_old, ord=np.inf) < tol:
+            break
+    
+    return x, k
+
+
+
+
 # Exemplu de utilizare:
 eps = 1e-15
-n, d, rare = citire_matrice_rara("tema3files/a_test.txt")
+n, d, rare = citire_matrice_met1("tema3files/a_test.txt")
+b = [6.0, 7.0, 8.0, 9.0, 1.0]  # Vector aleator de test
+sol_dict, iters_dict = gauss_seidel_sparse_dict(n, d, rare, b)
+print("Soluția Dicționar:", sol_dict)
+print("Număr de iterații Dicționar:", iters_dict)
 # verif_diag_elem_nenule(d, n)
 
 # # Afișare pentru verificare
-# print("Dimensiune:", n)
-# print("Diagonală:", d)
-# print("Elemente nenule non-diagonale:", rare)
+print("Dimensiune:", n)
+print("Diagonală:", d)
+print("Elemente nenule non-diagonale:", rare)
 
-n, valori, ind_col, inceput_linii = read_sparse_matrix("tema3files/a_test.txt")
+n, valori, ind_col, inceput_linii = citire_matrice_met2("tema3files/a_test.txt")
     
+sol_crs, iters_crs = gauss_seidel_sparse_crs(n, valori, ind_col, inceput_linii, b)
+print("Soluția CRS:", sol_crs)
+print("Număr de iterații CRS:", iters_crs)
+
 print("Vector valori:", valori)
 print("Vector ind_col:", ind_col)
 print("Vector inceput_linii:", inceput_linii)
