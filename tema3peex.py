@@ -1,16 +1,4 @@
 import numpy as np
-def citire_vector_rar (nume_fisier):
-    vector_rar = {}
-    with open(nume_fisier, "r") as f:
-        lungime = int(f.readline().strip())
-        for index, linie in enumerate(f):
-            linie = linie.strip()
-            if linie:
-                valoare = float(linie)
-                # if valoare != 0:   #fisierul b_5 contine un 0
-                vector_rar[index] = valoare
-    return vector_rar, lungime 
-
 def citire_matrice_met1(nume_fisier):
     with open(nume_fisier, "r") as f:
         # Citim dimensiunea matricei
@@ -52,10 +40,7 @@ def citire_matrice_met2(file_path):
         row_data = {}  # Temporary dictionary to store values for each row
 
         for line in file:
-            line = line.strip()
-            if not line:
-                continue
-            val, i, j = map(float, line.split(','))
+            val, i, j = map(float, line.strip().split(','))
             i, j = int(i), int(j)
             
             if i not in row_data:
@@ -66,6 +51,7 @@ def citire_matrice_met2(file_path):
                 row_data[i][j] += val
             else:
                 row_data[i][j] = val
+        print(row_data)
         # Process the row data into compressed row format
         for i in range(n):
             if i in row_data:
@@ -79,7 +65,9 @@ def citire_matrice_met2(file_path):
     return n, valori, ind_col, inceput_linii
 
 def gauss_seidel_met_1(n, d, rare, b, eps=1e-10, max_iter=10000):
-    x = np.zeros(n)  # Inițializare cu zero    
+    x = np.array([1.0, 2.0, 3.0, 4.0, 5.0])  # Inițializare cu valori specificate
+    # x = np.zeros(n)  # Inițializare cu zero
+    
     k = 0  # Contor pentru numărul de iterații
     
     while k < max_iter:
@@ -105,7 +93,8 @@ def gauss_seidel_met_1(n, d, rare, b, eps=1e-10, max_iter=10000):
     return x, k
 
 def gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps=1e-10, max_iter=10000):
-    x = np.zeros(n)  # Inițializare cu zero
+    # x = np.zeros(n)  # Inițializare cu zero
+    x = np.array([1.0, 2.0, 3.0, 4.0, 5.0])  # Inițializare cu valori specificate
     k = 0  # Contor pentru numărul de iterații
     
     while k < max_iter:
@@ -143,37 +132,26 @@ def verif_diag_elem_nenule(d, n):
 
 #Variabile generale
 eps = 1e-15
+b = [6.0, 7.0, 8.0, 9.0, 1.0]  # Vector b
 
-for i in range(5,6):
-    print("Iteratia", i)
-    a_path = f"tema3files/a_{i}.txt"
-    b_path = f"tema3files/b_{i}.txt"
-    b, lung_b = citire_vector_rar(b_path)
-    print("Metoda1:")
-    # Metoda 1:
-    n, d, rare = citire_matrice_met1(a_path)
-    # print("Dimensiune:", n)
-    # print("Diagonală:", d)
-    # print("Elemente nenule non-diagonale:", rare)
-    sol, nr_iter_dict = gauss_seidel_met_1(n, d, rare, b, eps)
-    if lung_b != n:
-        raise ValueError("Dimensiunea vectorului b nu corespunde cu dimensiunea matricei A.")
-    #Afișare pentru verificare
-    print("Soluția Metoda 1 cu Dicționar:", sol)
-    print("Număr de iterații Metoda 1 cu Dicționar:", nr_iter_dict)
+# Metoda 1:
+n, d, rare = citire_matrice_met1("tema3files/a_test.txt")
+print("Dimensiune:", n)
+print("Diagonală:", d)
+print("Elemente nenule non-diagonale:", rare)
+sol, nr_iter_dict = gauss_seidel_met_1(n, d, rare, b, eps)
+#Afișare pentru verificare
+print("Soluția Metoda 1 cu Dicționar:", sol)
+print("Număr de iterații Metoda 1 cu Dicționar:", nr_iter_dict)
 
-    print("Metoda2:")
-    # Metoda 2:
-    n, valori, ind_col, inceput_linii = citire_matrice_met2(a_path)
-    if lung_b != n:
-        raise ValueError("Dimensiunea vectorului b nu corespunde cu dimensiunea matricei A.")  
-    sol_crs, iters_crs = gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps)
-    print("Soluția Metoda 2 cu CRS:", sol_crs)
-    print("Număr de iterații Metoda 2 cu CRS:", iters_crs)
+# Metoda 2:
+n, valori, ind_col, inceput_linii = citire_matrice_met2("tema3files/a_test.txt")
+    
+sol_crs, iters_crs = gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps)
+print("Soluția CRS:", sol_crs)
+print("Număr de iterații CRS:", iters_crs)
 
-    # print("Vector valori:", valori)
-    # print("Vector ind_col:", ind_col)
-    # print("Vector inceput_linii:", inceput_linii)
-
-
+print("Vector valori:", valori)
+print("Vector ind_col:", ind_col)
+print("Vector inceput_linii:", inceput_linii)
 
