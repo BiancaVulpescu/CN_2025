@@ -141,10 +141,47 @@ def verif_diag_elem_nenule(d, n):
         return False
     return True
 
+def calc_norma_1(n, d, rare, x, b):
+    # Calculăm A * x
+    Ax = np.zeros(n)
+    for i in range(n):
+        suma = d[i] * x[i]  # Element diagonal
+        for val, j in rare[i]:
+            suma += val * x[j]  # Elemente non-diagonale
+        Ax[i] = suma
+    
+    # Calculăm reziduurile A * x - b
+    reziduuri = np.zeros(n)
+    for i in range(n):
+        reziduuri[i] = Ax[i] - b.get(i, 0)  # Dacă b[i] nu există, considerăm 0
+    
+    # Norma infinit
+    norma_inf = np.linalg.norm(reziduuri, ord=np.inf)
+    return norma_inf
+
+def calc_norma_2(n, valori, ind_col, inceput_linii, x, b):
+    # Calculăm A * x
+    Ax = np.zeros(n)
+    for i in range(n):
+        suma = 0.0
+        for idx in range(inceput_linii[i], inceput_linii[i+1]):
+            j = ind_col[idx]
+            suma += valori[idx] * x[j]
+        Ax[i] = suma
+    
+    # Calculăm reziduurile A * x - b
+    reziduuri = np.zeros(n)
+    for i in range(n):
+        reziduuri[i] = Ax[i] - b.get(i, 0)  # Dacă b[i] nu există, considerăm 0
+    
+    # Norma infinit
+    norma_inf = np.linalg.norm(reziduuri, ord=np.inf)
+    return norma_inf
+
 #Variabile generale
 eps = 1e-15
 
-for i in range(5,6):
+for i in range(1,6):
     print("Iteratia", i)
     a_path = f"tema3files/a_{i}.txt"
     b_path = f"tema3files/b_{i}.txt"
@@ -161,6 +198,10 @@ for i in range(5,6):
     #Afișare pentru verificare
     print("Soluția Metoda 1 cu Dicționar:", sol)
     print("Număr de iterații Metoda 1 cu Dicționar:", nr_iter_dict)
+    # Calcul norma infinit pentru metoda 1
+    norma_met_1 = calc_norma_1(n, d, rare, sol, b)
+    print("Norma infinit pentru metoda 1:", norma_met_1)
+
 
     print("Metoda2:")
     # Metoda 2:
@@ -170,7 +211,9 @@ for i in range(5,6):
     sol_crs, iters_crs = gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps)
     print("Soluția Metoda 2 cu CRS:", sol_crs)
     print("Număr de iterații Metoda 2 cu CRS:", iters_crs)
-
+    #Calcul norma infinit pentru metoda 2
+    norma_met2 = calc_norma_2(n, valori, ind_col, inceput_linii, sol_crs, b)
+    print("Norma infinit pentru metoda 2:", norma_met2)
     # print("Vector valori:", valori)
     # print("Vector ind_col:", ind_col)
     # print("Vector inceput_linii:", inceput_linii)
