@@ -27,7 +27,7 @@ def citire_matrice_met1(nume_fisier):
         rare[i] = [(val, j) for j, val in rare[i].items()]
 
     return n, d, rare
-
+eps= 1e-10
 def citire_matrice_met2(file_path):
     valori = []  # Store non-zero values
     ind_col = []  # Store column indices
@@ -57,9 +57,10 @@ def citire_matrice_met2(file_path):
         for i in range(n):
             if i in row_data:
                 for j, val in sorted(row_data[i].items()):
-                    valori.append(val)
-                    ind_col.append(j)
-                    element_count += 1
+                    if abs(val) >= eps:  # skip near-zero values
+                        valori.append(val)
+                        ind_col.append(j)
+                        element_count += 1
                 inceput_linii.append(element_count)
             
     
@@ -124,8 +125,9 @@ def suma_matrici_met2(n_a, valori_a, ind_col_a, inceput_linii_a, n_b, valori_b, 
 
         # Adăugăm elementele în format CRS
         for j, val in sorted(row_sum.items()):
-            valori_sum.append(val)
-            ind_col_sum.append(j)
+             if abs(val) >= eps:
+                valori_sum.append(val)
+                ind_col_sum.append(j)
         inceput_linii_sum.append(len(valori_sum))
 
     return n_sum, valori_sum, ind_col_sum, inceput_linii_sum
@@ -152,23 +154,37 @@ def verif_diag_elem_nenule(d, n):
     if len(d)!= n:
         return False
     return True
-
 def verifica_suma_met2(n_sum, valori_sum, ind_col_sum, inceput_linii_sum, 
                        valori_aplusb, ind_col_aplusb, inceput_linii_aplusb, eps=1e-10):
-    # Verificăm dacă structura CRS este identică
-    if inceput_linii_sum != inceput_linii_aplusb:
-        return False
-    if ind_col_sum != ind_col_aplusb:
-        return False
-    if len(valori_sum) != len(valori_aplusb):
+    def crs_to_dict(valori, ind_col, inceput_linii):
+        coord_map = {}
+        for i in range(len(inceput_linii) - 1):
+            start = inceput_linii[i]
+            end = inceput_linii[i + 1]
+            for idx in range(start, end):
+                j = ind_col[idx]
+                coord_map[(i, j)] = coord_map.get((i, j), 0) + valori[idx]
+        return coord_map
+
+    sum_dict = crs_to_dict(valori_sum, ind_col_sum, inceput_linii_sum)
+    expected_dict = crs_to_dict(valori_aplusb, ind_col_aplusb, inceput_linii_aplusb)
+
+    # Check for missing or extra coordinates
+    if set(sum_dict.keys()) != set(expected_dict.keys()):
+        print("Coordonate lipsă sau în plus:")
+        print("Doar în sumă:", set(sum_dict.keys()) - set(expected_dict.keys()))
+        print("Doar în aplusb:", set(expected_dict.keys()) - set(sum_dict.keys()))
         return False
 
-    # Verificăm valorile nenule cu toleranța eps
-    for v1, v2 in zip(valori_sum, valori_aplusb):
-        if abs(v1 - v2) >= eps:
+    # Check for mismatched values
+    for coord in sum_dict:
+        diff = abs(sum_dict[coord] - expected_dict[coord])
+        if diff >= eps:
+            print(f"Valoare diferită la {coord}: sum={sum_dict[coord]}, aplusb={expected_dict[coord]}, diff={diff}")
             return False
 
     return True
+
 
 eps = 1e-10
 a_path = f"tema3files/a.txt"
