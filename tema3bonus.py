@@ -57,10 +57,9 @@ def citire_matrice_met2(file_path):
         for i in range(n):
             if i in row_data:
                 for j, val in sorted(row_data[i].items()):
-                    if abs(val) >= eps:  # skip near-zero values
-                        valori.append(val)
-                        ind_col.append(j)
-                        element_count += 1
+                    valori.append(val)
+                    ind_col.append(j)
+                    element_count += 1
                 inceput_linii.append(element_count)
             
     
@@ -125,9 +124,8 @@ def suma_matrici_met2(n_a, valori_a, ind_col_a, inceput_linii_a, n_b, valori_b, 
 
         # Adăugăm elementele în format CRS
         for j, val in sorted(row_sum.items()):
-             if abs(val) >= eps:
-                valori_sum.append(val)
-                ind_col_sum.append(j)
+            valori_sum.append(val)
+            ind_col_sum.append(j)
         inceput_linii_sum.append(len(valori_sum))
 
     return n_sum, valori_sum, ind_col_sum, inceput_linii_sum
