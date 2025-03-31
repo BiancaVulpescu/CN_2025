@@ -153,7 +153,7 @@ def calc_norma_1(n, d, rare, x, b):
     # Calculăm reziduurile A * x - b
     reziduuri = np.zeros(n)
     for i in range(n):
-        reziduuri[i] = Ax[i] - b.get(i, 0)  # Dacă b[i] nu există, considerăm 0
+        reziduuri[i] = Ax[i] - b[i]
     
     # Norma infinit
     norma_inf = np.linalg.norm(reziduuri, ord=np.inf)
@@ -172,7 +172,7 @@ def calc_norma_2(n, valori, ind_col, inceput_linii, x, b):
     # Calculăm reziduurile A * x - b
     reziduuri = np.zeros(n)
     for i in range(n):
-        reziduuri[i] = Ax[i] - b.get(i, 0)  # Dacă b[i] nu există, considerăm 0
+        reziduuri[i] = Ax[i] - b[i] 
     
     # Norma infinit
     norma_inf = np.linalg.norm(reziduuri, ord=np.inf)
@@ -180,7 +180,6 @@ def calc_norma_2(n, valori, ind_col, inceput_linii, x, b):
 
 #Variabile generale
 eps = 1e-15
-
 for i in range(1,6):
     print("Iteratia", i)
     a_path = f"tema3files/a_{i}.txt"
@@ -189,34 +188,36 @@ for i in range(1,6):
     print("Metoda1:")
     # Metoda 1:
     n, d, rare = citire_matrice_met1(a_path)
-    # print("Dimensiune:", n)
-    # print("Diagonală:", d)
-    # print("Elemente nenule non-diagonale:", rare)
-    sol, nr_iter_dict = gauss_seidel_met_1(n, d, rare, b, eps)
-    if lung_b != n:
-        raise ValueError("Dimensiunea vectorului b nu corespunde cu dimensiunea matricei A.")
-    #Afișare pentru verificare
-    print("Soluția Metoda 1 cu Dicționar:", sol)
-    print("Număr de iterații Metoda 1 cu Dicționar:", nr_iter_dict)
-    # Calcul norma infinit pentru metoda 1
-    norma_met_1 = calc_norma_1(n, d, rare, sol, b)
-    print("Norma infinit pentru metoda 1:", norma_met_1)
+    if (verif_diag_elem_nenule(d, n) == True):
+
+        # print("Dimensiune:", n)
+        # print("Diagonală:", d)
+        # print("Elemente nenule non-diagonale:", rare)
+        sol, nr_iter_dict = gauss_seidel_met_1(n, d, rare, b, eps)
+        if lung_b != n:
+            raise ValueError("Dimensiunea vectorului b nu corespunde cu dimensiunea matricei A.")
+        #Afișare pentru verificare
+        print("Soluția Metoda 1 cu Dicționar:", sol)
+        print("Număr de iterații Metoda 1 cu Dicționar:", nr_iter_dict)
+        # Calcul norma infinit pentru metoda 1
+        norma_met_1 = calc_norma_1(n, d, rare, sol, b)
+        print("Norma infinit pentru metoda 1:", norma_met_1)
 
 
-    print("Metoda2:")
-    # Metoda 2:
-    n, valori, ind_col, inceput_linii = citire_matrice_met2(a_path)
-    if lung_b != n:
-        raise ValueError("Dimensiunea vectorului b nu corespunde cu dimensiunea matricei A.")  
-    sol_crs, iters_crs = gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps)
-    print("Soluția Metoda 2 cu CRS:", sol_crs)
-    print("Număr de iterații Metoda 2 cu CRS:", iters_crs)
-    #Calcul norma infinit pentru metoda 2
-    norma_met2 = calc_norma_2(n, valori, ind_col, inceput_linii, sol_crs, b)
-    print("Norma infinit pentru metoda 2:", norma_met2)
-    # print("Vector valori:", valori)
-    # print("Vector ind_col:", ind_col)
-    # print("Vector inceput_linii:", inceput_linii)
-
-
+        print("Metoda2:")
+        # Metoda 2:
+        n, valori, ind_col, inceput_linii = citire_matrice_met2(a_path)
+        if lung_b != n:
+            raise ValueError("Dimensiunea vectorului b nu corespunde cu dimensiunea matricei A.")  
+        sol_crs, iters_crs = gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps)
+        print("Soluția Metoda 2 cu CRS:", sol_crs)
+        print("Număr de iterații Metoda 2 cu CRS:", iters_crs)
+        #Calcul norma infinit pentru metoda 2
+        norma_met2 = calc_norma_2(n, valori, ind_col, inceput_linii, sol_crs, b)
+        print("Norma infinit pentru metoda 2:", norma_met2)
+        # print("Vector valori:", valori)
+        # print("Vector ind_col:", ind_col)
+        # print("Vector inceput_linii:", inceput_linii)
+    else: 
+        print("Metoda Gauss-Seidel nu poate fi aplicată deoarece elementele diagonale sunt nule.")
 

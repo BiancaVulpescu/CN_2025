@@ -82,8 +82,8 @@ def gauss_seidel_met_1(n, d, rare, b, eps=1e-10, max_iter=10000):
             if diag == 0:
                 raise ValueError("Element diagonal zero. Metoda Gauss-Seidel nu poate fi aplicată.")
             x[i] = (b[i] - suma) / diag  # Actualizare Gauss-Seidel
-            # print(f"Iteratia {k}, {x}")
         
+        print(f"Iteratia {k}, {x}")
         k += 1
         
         # Verificare criteriu de oprire ||x - x_old|| < eps
@@ -139,19 +139,21 @@ n, d, rare = citire_matrice_met1("tema3files/a_test.txt")
 print("Dimensiune:", n)
 print("Diagonală:", d)
 print("Elemente nenule non-diagonale:", rare)
-sol, nr_iter_dict = gauss_seidel_met_1(n, d, rare, b, eps)
-#Afișare pentru verificare
-print("Soluția Metoda 1 cu Dicționar:", sol)
-print("Număr de iterații Metoda 1 cu Dicționar:", nr_iter_dict)
+if (verif_diag_elem_nenule(d, n) == True):
+    sol, nr_iter_dict = gauss_seidel_met_1(n, d, rare, b, eps)
+    #Afișare pentru verificare
+    print("Soluția Metoda 1 cu Dicționar:", sol)
+    print("Număr de iterații Metoda 1 cu Dicționar:", nr_iter_dict)
 
-# Metoda 2:
-n, valori, ind_col, inceput_linii = citire_matrice_met2("tema3files/a_test.txt")
-    
-sol_crs, iters_crs = gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps)
-print("Soluția CRS:", sol_crs)
-print("Număr de iterații CRS:", iters_crs)
+    # Metoda 2:
+    n, valori, ind_col, inceput_linii = citire_matrice_met2("tema3files/a_test.txt")
 
-print("Vector valori:", valori)
-print("Vector ind_col:", ind_col)
-print("Vector inceput_linii:", inceput_linii)
+    sol_crs, iters_crs = gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps)
+    print("Soluția CRS:", sol_crs)
+    print("Număr de iterații CRS:", iters_crs)
 
+    print("Vector valori:", valori)
+    print("Vector ind_col:", ind_col)
+    print("Vector inceput_linii:", inceput_linii)
+else:
+    print("Metoda Gauss-Seidel nu poate fi aplicată deoarece elementele diagonale sunt nule.")
