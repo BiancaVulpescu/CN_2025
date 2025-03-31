@@ -123,7 +123,6 @@ def suma_matrici_met2(n_a, valori_a, ind_col_a, inceput_linii_a, n_b, valori_b, 
                 else:
                     row_sum[j] = val
 
-        # Adăugăm elementele în format CRS
         for j, val in sorted(row_sum.items()):
              if abs(val) >= eps:
                 valori_sum.append(val)
@@ -154,9 +153,9 @@ def verif_diag_elem_nenule(d, n):
     if len(d)!= n:
         return False
     return True
-def verifica_suma_met2(n_sum, valori_sum, ind_col_sum, inceput_linii_sum, 
+def verifica_suma_met2(valori_sum, ind_col_sum, inceput_linii_sum, 
                         valori_aplusb, ind_col_aplusb, inceput_linii_aplusb, eps=1e-10):
-     # Verificăm dacă structura CRS este identică
+
      if inceput_linii_sum != inceput_linii_aplusb:
          return False
      if ind_col_sum != ind_col_aplusb:
@@ -202,7 +201,7 @@ if (verif_diag_elem_nenule(d_a, n_a) == True and verif_diag_elem_nenule(d_b, n_b
     
     n_sum, valori_sum, ind_col_sum, inceput_linii_sum = suma_matrici_met2( n_a, valori_a, ind_col_a, inceput_linii_a, n_b, valori_b, ind_col_b, inceput_linii_b)
     
-    if (verifica_suma_met2(n_sum, valori_sum, ind_col_sum, inceput_linii_sum, valori_aplusb, ind_col_aplusb, inceput_linii_aplusb, eps) == True):
+    if (verifica_suma_met2(valori_sum, ind_col_sum, inceput_linii_sum, valori_aplusb, ind_col_aplusb, inceput_linii_aplusb, eps) == True):
         print("Suma este corectă (metoda 2).")
     else:
         print("Suma este incorectă (metoda 2).")
