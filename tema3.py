@@ -7,49 +7,46 @@ def citire_vector_rar (nume_fisier):
             linie = linie.strip()
             if linie:
                 valoare = float(linie)
-                # if valoare != 0:   #fisierul b_5 contine un 0
                 vector_rar[index] = valoare
     return vector_rar, lungime 
 
 def citire_matrice_met1(nume_fisier):
     with open(nume_fisier, "r") as f:
-        # Citim dimensiunea matricei
+
         n = int(f.readline().strip())
         
-        # Inițializăm vectorul diagonal și dicționarul pentru elementele nenule
         d = [0] * n
         rare = {i: {} for i in range(n)}
 
         # Citim fiecare element nenul
         for linie in f:
             linie = linie.strip()
-            if not linie:  # Ignorăm liniile goale
+            if not linie:
                 continue
             val, i, j = map(str.strip, linie.split(","))
             val, i, j = float(val), int(i), int(j)  # Convertim la tipurile corecte
             if(val!=0):
                 if i == j:
-                    d[i] += val  # Element diagonal
+                    d[i] += val  
                 else:
                     if j in rare[i]:
-                        rare[i][j] += val  # Adunăm valorile pentru aceiași indici
+                        rare[i][j] += val  
                     else:
-                        rare[i][j] = val  # Adăugăm o nouă valoare
-    # Convertim dicționarele rare[i] în liste de tupluri pentru consistență
+                        rare[i][j] = val  
     for i in range(n):
         rare[i] = [(val, j) for j, val in rare[i].items()]
 
     return n, d, rare
 
 def citire_matrice_met2(file_path):
-    valori = []  # Store non-zero values
-    ind_col = []  # Store column indices
-    inceput_linii = [0]  # Start positions for each row (0-based indexing)
+    valori = []  
+    ind_col = []  
+    inceput_linii = [0]  
     
     with open(file_path, 'r') as file:
-        n = int(file.readline().strip())  # Read matrix dimension
+        n = int(file.readline().strip())  
         element_count = 0
-        row_data = {}  # Temporary dictionary to store values for each row
+        row_data = {} 
 
         for line in file:
             line = line.strip()
@@ -61,12 +58,10 @@ def citire_matrice_met2(file_path):
             if i not in row_data:
                 row_data[i] = {}
             
-            # Sum values for duplicate indices
             if j in row_data[i]:
                 row_data[i][j] += val
             else:
                 row_data[i][j] = val
-        # Process the row data into compressed row format
         for i in range(n):
             if i in row_data:
                 for j, val in sorted(row_data[i].items()):
@@ -79,8 +74,8 @@ def citire_matrice_met2(file_path):
     return n, valori, ind_col, inceput_linii
 
 def gauss_seidel_met_1(n, d, rare, b, eps=1e-10, max_iter=10000):
-    x = np.zeros(n)  # Inițializare cu zero    
-    k = 0  # Contor pentru numărul de iterații
+    x = np.zeros(n)  
+    k = 0  
     
     while k < max_iter:
         x_old = x.copy()
@@ -90,7 +85,7 @@ def gauss_seidel_met_1(n, d, rare, b, eps=1e-10, max_iter=10000):
             diag = d[i]
             for val, j in rare[i]:
                 if j != i:
-                    suma += val * x[j]  # Elemente non-diagonale
+                    suma += val * x[j]  
             if diag == 0:
                 raise ValueError("Element diagonal zero. Metoda Gauss-Seidel nu poate fi aplicată.")
             x[i] = (b[i] - suma) / diag  # Actualizare Gauss-Seidel
@@ -105,8 +100,8 @@ def gauss_seidel_met_1(n, d, rare, b, eps=1e-10, max_iter=10000):
     return x, k
 
 def gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps=1e-10, max_iter=10000):
-    x = np.zeros(n)  # Inițializare cu zero
-    k = 0  # Contor pentru numărul de iterații
+    x = np.zeros(n)  
+    k = 0  
     
     while k < max_iter:
         x_old = x.copy()
@@ -120,9 +115,9 @@ def gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps=1e-10, max_iter
                 val = valori[idx]
                 
                 if j == i:
-                    diag = val  # Element diagonal
+                    diag = val 
                 else:
-                    suma += val * x[j]  # Elemente non-diagonale
+                    suma += val * x[j] 
             
             if diag == 0:
                 raise ValueError("Element diagonal zero. Metoda Gauss-Seidel nu poate fi aplicată.")
@@ -145,9 +140,9 @@ def calc_norma_1(n, d, rare, x, b):
     # Calculăm A * x
     Ax = np.zeros(n)
     for i in range(n):
-        suma = d[i] * x[i]  # Element diagonal
+        suma = d[i] * x[i]  
         for val, j in rare[i]:
-            suma += val * x[j]  # Elemente non-diagonale
+            suma += val * x[j] 
         Ax[i] = suma
     
     # Calculăm reziduurile A * x - b
