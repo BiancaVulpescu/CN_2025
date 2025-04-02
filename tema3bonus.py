@@ -120,12 +120,12 @@ def suma_matrici_met2(n_a, valori_a, ind_col_a, inceput_linii_a, n_b, valori_b, 
     return n_sum, valori_sum, ind_col_sum, inceput_linii_sum
 
 def verifica_suma_met1(n_sum, d_sum, rare_sum, d_aplusb, rare_aplusb, eps=1e-10):
-    # Verificăm diagonalele
+    # Verificam diagonalele
     for i in range(n_sum):
         if abs(d_sum[i] - d_aplusb[i]) >= eps:
             return False
 
-    # Verificăm elementele non-diagonale
+    # Verificam elementele non-diagonale
     for i in range(n_sum):
         rare1 = {j: val for val, j in rare_sum[i]}
         rare2 = {j: val for val, j in rare_aplusb[i]}
@@ -151,7 +151,7 @@ def verifica_suma_met2(valori_sum, ind_col_sum, inceput_linii_sum,
      if len(valori_sum) != len(valori_aplusb):
          return False
  
-     # Verificăm valorile nenule cu toleranța eps
+     # Verificam valorile nenule cu toleranța eps
      for v1, v2 in zip(valori_sum, valori_aplusb):
          if abs(v1 - v2) >= eps:
              return False

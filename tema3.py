@@ -1,3 +1,6 @@
+#pentru metoda 2 de calcul : 
+#https://edu.info.uaic.ro/calcul-numeric/CN/lab/3/smr.pdf
+#procent de rezolvare cu AI 20%
 import numpy as np
 def citire_vector_rar (nume_fisier):
     vector_rar = {}
@@ -89,7 +92,7 @@ def gauss_seidel_met_1(n, d, rare, b, eps=1e-10, max_iter=10000):
             if diag == 0:
                 raise ValueError("Element diagonal zero. Metoda Gauss-Seidel nu poate fi aplicată.")
             x[i] = (b[i] - suma) / diag  # Actualizare Gauss-Seidel
-            # print(f"Iteratia {k}, {x}")
+            
         
         k += 1
         
@@ -145,7 +148,7 @@ def verif_diag_elem_nenule(d, n):
     return True
 
 def calc_norma_1(n, d, rare, x, b):
-    # Calculăm A * x
+    # Calculam A * x
     Ax = np.zeros(n)
     for i in range(n):
         suma = d[i] * x[i]  
@@ -153,7 +156,7 @@ def calc_norma_1(n, d, rare, x, b):
             suma += val * x[j] 
         Ax[i] = suma
     
-    # Calculăm reziduurile A * x - b
+    # Calculam reziduurile A * x - b
     reziduuri = np.zeros(n)
     for i in range(n):
         reziduuri[i] = Ax[i] - b[i]
@@ -163,7 +166,7 @@ def calc_norma_1(n, d, rare, x, b):
     return norma_inf
 
 def calc_norma_2(n, valori, ind_col, inceput_linii, x, b):
-    # Calculăm A * x
+    # Calculam A * x
     Ax = np.zeros(n)
     for i in range(n):
         suma = 0.0
@@ -172,7 +175,7 @@ def calc_norma_2(n, valori, ind_col, inceput_linii, x, b):
             suma += valori[idx] * x[j]
         Ax[i] = suma
     
-    # Calculăm reziduurile A * x - b
+    # Calculam reziduurile A * x - b
     reziduuri = np.zeros(n)
     for i in range(n):
         reziduuri[i] = Ax[i] - b[i] 
@@ -199,7 +202,7 @@ for i in range(1,6):
         sol, nr_iter_dict = gauss_seidel_met_1(n, d, rare, b, eps)
         if lung_b != n:
             raise ValueError("Dimensiunea vectorului b nu corespunde cu dimensiunea matricei A.")
-        #Afișare pentru verificare
+        #Afisare pentru verificare
         print("Soluția Metoda 1 cu Dicționar:", sol)
         print("Număr de iterații Metoda 1 cu Dicționar:", nr_iter_dict)
         # Calcul norma infinit pentru metoda 1
