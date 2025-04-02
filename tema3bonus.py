@@ -95,15 +95,13 @@ def suma_matrici_met2(n_a, valori_a, ind_col_a, inceput_linii_a, n_b, valori_b, 
     inceput_linii_sum = [0]
     for i in range(n_sum):
         row_sum = {}
-
-        # Adăugăm elementele din prima matrice
+        #pentru mat a
         if i < n_a:
             for idx in range(inceput_linii_a[i], inceput_linii_a[i+1]):
                 j = ind_col_a[idx]
                 val = valori_a[idx]
                 row_sum[j] = val
-
-        # Adăugăm elementele din a doua matrice
+        #pentru mat b
         if i < n_b:
             for idx in range(inceput_linii_b[i], inceput_linii_b[i+1]):
                 j = ind_col_b[idx]
@@ -112,7 +110,7 @@ def suma_matrici_met2(n_a, valori_a, ind_col_a, inceput_linii_a, n_b, valori_b, 
                     row_sum[j] += val
                 else:
                     row_sum[j] = val
-
+        
         for j, val in sorted(row_sum.items()):
              if abs(val) >= eps:
                 valori_sum.append(val)
