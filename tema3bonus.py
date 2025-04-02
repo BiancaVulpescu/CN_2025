@@ -1,42 +1,38 @@
 def citire_matrice_met1(nume_fisier):
     with open(nume_fisier, "r") as f:
-        # Citim dimensiunea matricei
         n = int(f.readline().strip())
         
-        # Inițializăm vectorul diagonal și dicționarul pentru elementele nenule
         d = [0] * n
         rare = {i: {} for i in range(n)}
 
-        # Citim fiecare element nenul
         for linie in f:
             linie = linie.strip()
-            if not linie:  # Ignorăm liniile goale
+            if not linie: 
                 continue
             val, i, j = map(str.strip, linie.split(","))
-            val, i, j = float(val), int(i), int(j)  # Convertim la tipurile corecte
+            val, i, j = float(val), int(i), int(j)  
 
             if i == j:
-                d[i] += val  # Element diagonal
+                d[i] += val  
             else:
                 if j in rare[i]:
-                    rare[i][j] += val  # Adunăm valorile pentru aceiași indici
+                    rare[i][j] += val  
                 else:
-                    rare[i][j] = val  # Adăugăm o nouă valoare
-    # Convertim dicționarele rare[i] în liste de tupluri pentru consistență
+                    rare[i][j] = val 
     for i in range(n):
         rare[i] = [(val, j) for j, val in rare[i].items()]
 
     return n, d, rare
 eps= 1e-10
 def citire_matrice_met2(file_path):
-    valori = []  # Store non-zero values
-    ind_col = []  # Store column indices
-    inceput_linii = [0]  # Start positions for each row (0-based indexing)
+    valori = []  
+    ind_col = [] 
+    inceput_linii = [0] 
     
     with open(file_path, 'r') as file:
-        n = int(file.readline().strip())  # Read matrix dimension
+        n = int(file.readline().strip())  
         element_count = 0
-        row_data = {}  # Temporary dictionary to store values for each row
+        row_data = {}  
 
         for line in file:
             line = line.strip()
@@ -48,16 +44,14 @@ def citire_matrice_met2(file_path):
             if i not in row_data:
                 row_data[i] = {}
             
-            # Sum values for duplicate indices
             if j in row_data[i]:
                 row_data[i][j] += val
             else:
                 row_data[i][j] = val
-        # Process the row data into compressed row format
         for i in range(n):
             if i in row_data:
                 for j, val in sorted(row_data[i].items()):
-                    if abs(val) >= eps:  # skip near-zero values
+                    if abs(val) >= eps:  
                         valori.append(val)
                         ind_col.append(j)
                         element_count += 1
@@ -71,13 +65,11 @@ def suma_matrici_met1(n_a, d_a, rare_a, n_b, d_b, rare_b):
     d_sum = [0] * n_sum
     rare_sum = {i: {} for i in range(n_sum)}
 
-    # Adăugăm elementele diagonale
     for i in range(n_a):
         d_sum[i] += d_a[i]
     for i in range(n_b):
         d_sum[i] += d_b[i]
 
-    # Adăugăm elementele non-diagonale
     for i in range(n_a):
         for val, j in rare_a[i]:
             if j in rare_sum[i]:
@@ -91,7 +83,6 @@ def suma_matrici_met1(n_a, d_a, rare_a, n_b, d_b, rare_b):
             else:
                 rare_sum[i][j] = val
 
-    # Convertim dicționarele rare_sum[i] în liste de tupluri
     for i in range(n_sum):
         rare_sum[i] = [(val, j) for j, val in rare_sum[i].items()]
 
@@ -102,7 +93,6 @@ def suma_matrici_met2(n_a, valori_a, ind_col_a, inceput_linii_a, n_b, valori_b, 
     valori_sum = []
     ind_col_sum = []
     inceput_linii_sum = [0]
-    # reconstruim dictionarul cu valorile sumate
     for i in range(n_sum):
         row_sum = {}
 

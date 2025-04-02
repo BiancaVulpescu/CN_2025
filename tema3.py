@@ -27,14 +27,14 @@ def citire_matrice_met1(nume_fisier):
                 continue
             val, i, j = map(str.strip, linie.split(","))
             val, i, j = float(val), int(i), int(j)  # Convertim la tipurile corecte
-
-            if i == j:
-                d[i] += val  # Element diagonal
-            else:
-                if j in rare[i]:
-                    rare[i][j] += val  # Adunăm valorile pentru aceiași indici
+            if(val!=0):
+                if i == j:
+                    d[i] += val  # Element diagonal
                 else:
-                    rare[i][j] = val  # Adăugăm o nouă valoare
+                    if j in rare[i]:
+                        rare[i][j] += val  # Adunăm valorile pentru aceiași indici
+                    else:
+                        rare[i][j] = val  # Adăugăm o nouă valoare
     # Convertim dicționarele rare[i] în liste de tupluri pentru consistență
     for i in range(n):
         rare[i] = [(val, j) for j, val in rare[i].items()]
