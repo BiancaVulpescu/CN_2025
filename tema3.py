@@ -96,7 +96,11 @@ def gauss_seidel_met_1(n, d, rare, b, eps=1e-10, max_iter=10000):
         # Verificare criteriu de oprire ||x - x_old|| < eps
         if np.linalg.norm(x - x_old, ord=np.inf) < eps:
             break
-    
+        if np.linalg.norm(x - x_old, ord=np.inf) > 100000000000000000000:
+            print("Sistemul nu converge.")
+            break
+    if(k == max_iter):
+        print("Numar maxim de iteratii atins.")
     return x, k
 
 def gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps=1e-10, max_iter=10000):
@@ -128,7 +132,11 @@ def gauss_seidel_met_2(n, valori, ind_col, inceput_linii, b, eps=1e-10, max_iter
         # Verificare criteriu de oprire ||x - x_old|| < eps
         if np.linalg.norm(x - x_old, ord=np.inf) < eps:
             break
-    
+        if np.linalg.norm(x - x_old, ord=np.inf) > 100000000000000000000:
+            print("Sistemul nu converge.")
+            break
+    if(k == max_iter):
+        print("Numar maxim de iteratii atins.")
     return x, k
 
 def verif_diag_elem_nenule(d, n):
