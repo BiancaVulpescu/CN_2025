@@ -1,7 +1,3 @@
-n = 3
-A = [[-24, 18, 5], [20, -15, -4], [-5, 4, 1]]
-eps = 1e-10
-kmax = 10000
 import numpy as np
 
 # Norme necesare pentru inițializare
@@ -18,56 +14,66 @@ def initializeaza_V0(A):
     norminf = norma_inf(A)
     return A_T / (norm1 * norminf)
 
-# Formula (1) - Schultz
-def iteratia_schultz(Vk, A):
-    I = np.eye(A.shape[0])
-    return Vk @ (2 * I - A @ Vk)
+def matrice_ai_minus_AV(a, A, V):
+    B = -A  # B = -A, calculată o singură dată
+    C = B @ V
+    C[np.diag_indices_from(C)] += a
+    return C
 
-# Formula (2) - Li și Li - prima variantă
-def iteratia_Li_1(Vk, A):
-    I = np.eye(A.shape[0])
-    return Vk @ (3 * I - A @ Vk @ (3 * I - A @ Vk))
+# Formula (1): Schultz
+def iteratia_schultz(V, A):
+    C = matrice_ai_minus_AV(2, A, V)
+    return V @ C
 
-# Formula (3) - Li și Li - a doua variantă
-def iteratia_Li_2(Vk, A):
+# Formula (2): Li și Li - prima variantă
+def iteratia_Li_1(V, A):
     I = np.eye(A.shape[0])
-    E = I - Vk @ A
-    F = 3 * I - Vk @ A
-    return (I + 0.25 * E @ F @ F) @ Vk
+    C = matrice_ai_minus_AV(3, A, V)
+    return V @ (3 * I - A @ V @ C)
+
+
+# Formula (3): Li și Li - a doua variantă
+def iteratia_Li_2(V, A):
+    I = np.eye(A.shape[0])
+    E = I - V @ A
+    F = 3 * I - V @ A
+    return (I + 0.25 * E @ F @ F) @ V
 
 # Funcție principală de aproximare
-def aprox_inverse(A, metoda="schultz", epsilon=1e-6, k_max=10000):
-    V0 = initializeaza_V0(A)
-    V1 = V0.copy()
+def aprox_inverse(A, metoda="schultz", epsilon=1e-10, k_max=10000):
+    V = initializeaza_V0(A)
     k = 0
 
     while True:
-        V0 = V1.copy()
+        V_prev = V.copy()
 
         if metoda == "schultz":
-            V1 = iteratia_schultz(V0, A)
+            V = iteratia_schultz(V_prev, A)
         elif metoda == "li1":
-            V1 = iteratia_Li_1(V0, A)
+            V = iteratia_Li_1(V_prev, A)
         elif metoda == "li2":
-            V1 = iteratia_Li_2(V0, A)
+            V = iteratia_Li_2(V_prev, A)
         else:
             raise ValueError("Metodă necunoscută: folosește 'schultz', 'li1' sau 'li2'")
 
-        delta_V = np.linalg.norm(V1 - V0)
+        delta_V = np.linalg.norm(V - V_prev)
         k += 1
 
         if delta_V < epsilon or k >= k_max or delta_V > 1e10:
             break
 
     if delta_V < epsilon:
-        return V1
+        return V
     else:
         print(f"Divergență după {k} pași")
         return None
 
 # Exemplu de testare
 if __name__ == "__main__":
-    A = np.array([[4.0, 2.0], [3.0, 1.0]])
+    n = 3
+    A = np.array([[-24, 18, 5], [20, -15, -4], [-5, 4, 1]])
+    eps = 1e-10
+    kmax = 10000
     inv_exact = np.linalg.inv(A)
 
     for metoda in ["schultz", "li1", "li2"]:
