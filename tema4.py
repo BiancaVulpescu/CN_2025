@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 # Funcția pentru a genera matricea A de dimensiune n
 def genereaza_A(n):
@@ -10,7 +9,7 @@ def genereaza_A(n):
             A[i, i+1] = 2  # Prima diagonală superioară
     return A
 
-# Norme necesare pentru inițializare
+# Norme necesare pentru inițializare (din codul original)
 def norma_1(A):
     return np.max(np.sum(np.abs(A), axis=0))  # suma maximă a coloanelor
 
@@ -48,10 +47,10 @@ def iteratia_Li_2(V, A):
     F = 3 * I - V @ A
     return (I + 0.25 * E @ F @ F) @ V
 
-# Funcția principală
+# Funcția de aproximare a inversei
 def aprox_inverse(A, metoda="schultz", epsilon=1e-10, k_max=10000):
     V = initializeaza_V0(A)
-    B = -A  # ✅ calculăm o singură dată în tot programul
+    B = -A
     k = 0
 
     while True:
@@ -77,7 +76,7 @@ def aprox_inverse(A, metoda="schultz", epsilon=1e-10, k_max=10000):
     else:
         print(f"Divergență după {k} pași")
         return None, k
-    
+
 # Funcție pentru a investiga forma inversei pentru diferite valori ale lui n
 def investiga_inversa():
     # Vom analiza matricea pentru diferite valori ale lui n
@@ -92,13 +91,8 @@ def investiga_inversa():
         print("\nInversa exactă:")
         print(inv_exact)
         
-        # Observăm tiparul din inversa exactă
-        print("\nObservații:")
-        for i in range(n):
-            for j in range(n):
-                if abs(inv_exact[i, j]) > 1e-10:  # Ignorăm valorile foarte apropiate de zero
-                    print(f"A_inv[{i}, {j}] = {inv_exact[i, j]}")
 
+# Funcție pentru a deduce forma generală a inversei
 def forma_generala_inversa(n):
     A_inv = np.zeros((n, n))
     
@@ -113,6 +107,7 @@ def forma_generala_inversa(n):
     
     return A_inv
 
+# Funcție pentru a compara inversa exactă cu cea obținută prin formulă și prin aproximare
 def compara_inverse(n, metoda="schultz"):
     A = genereaza_A(n)
     
@@ -148,18 +143,22 @@ def verifica_inversa(n):
     identitate = np.eye(n)
     eroare = np.linalg.norm(produs - identitate)
     
-    print(f"Verificare pentru n = {n}:")
-    print(f"||A * A_inv - I|| = {eroare:.4e}")
     
     return eroare < 1e-10
 
-# Funcția pentru testare și vizualizare
+# Funcție pentru a afișa matricea într-un format mai clar
+def afiseaza_matrice(M, nume="Matrice"):
+    n = M.shape[0]
+    print(f"\n{nume} ({n}x{n}):")
+    for i in range(n):
+        row = " ".join([f"{M[i, j]:8.4f}" for j in range(n)])
+        print(f"| {row} |")
+
+# Funcția pentru testare și analiză completă
 def analiza_completa():
     # Investigăm inversa pentru diferite valori de n pentru a deduce forma generală
     investiga_inversa()
     
-    print("\n\n========== VERIFICARE FORMULA ==========")
-    # Verificăm formula pentru diferite valori de n
     for n in range(2, 10):
         verifica_inversa(n)
     
@@ -175,37 +174,17 @@ def analiza_completa():
     print("\nLi varianta 2:")
     _, inv_li2 = compara_inverse(n, "li2")
     
-    # Vizualizăm inversa matricei pentru n = 10
-    plt.figure(figsize=(12, 10))
+    # Afișăm inversa exactă și aproximată pentru n = 5 (dimensiune mai mică pentru lizibilitate)
+    n_display = 5
+    A = genereaza_A(n_display)
+    inv_exact = forma_generala_inversa(n_display)
     
-    plt.subplot(2, 2, 1)
-    plt.imshow(inv_exact, cmap='viridis')
-    plt.colorbar()
-    plt.title('Inversa exactă (formula)')
+    afiseaza_matrice(A, "Matricea A originală")
+    afiseaza_matrice(inv_exact, "Inversa exactă (formula)")
     
-    if inv_schultz is not None:
-        plt.subplot(2, 2, 2)
-        plt.imshow(inv_schultz, cmap='viridis')
-        plt.colorbar()
-        plt.title('Inversa aproximată (Schultz)')
+    # Verificăm calculul inversei
+    produs = A @ inv_exact
+    afiseaza_matrice(produs, "A * A^(-1) (ar trebui să fie aprox. identitate)")
     
-    if inv_li1 is not None:
-        plt.subplot(2, 2, 3)
-        plt.imshow(inv_li1, cmap='viridis')
-        plt.colorbar()
-        plt.title('Inversa aproximată (Li1)')
-    
-    if inv_li2 is not None:
-        plt.subplot(2, 2, 4)
-        plt.imshow(inv_li2, cmap='viridis')
-        plt.colorbar()
-        plt.title('Inversa aproximată (Li2)')
-    
-    plt.tight_layout()
-    plt.savefig('inverse_comparison.png')
-    plt.close()
-    
-    print("\nVizualizare salvată în fișierul 'inverse_comparison.png'")
-
 if __name__ == "__main__":
     analiza_completa()
