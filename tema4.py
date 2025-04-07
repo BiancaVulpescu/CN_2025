@@ -1,5 +1,12 @@
 import numpy as np
 
+def genereaza_A(n):
+    A = np.zeros((n, n))
+    for i in range(n):
+        A[i, i] = 1 
+        if i< n-1:
+            A[i, i+1] = 2 
+    return A
 # Norme necesare pentru inițializare
 def norma_1(A):
     return np.max(np.sum(np.abs(A), axis=0))  # suma maximă a coloanelor
@@ -88,3 +95,23 @@ if __name__ == "__main__":
 
             print("Eroare față de inversa exactă:")
             print(np.linalg.norm(inv_aprox - inv_exact))
+
+
+    print("\n=== Testare pentru matricele A_3, A_4, A_5 ===")
+    A_3 = genereaza_A(3)
+    A_4 = genereaza_A(4)
+    A_5 = genereaza_A(5)
+
+    for A in [A_3, A_4, A_5]:
+        inv_exact = np.linalg.inv(A)
+        print(inv_exact)
+        for metoda in ["schultz", "li1", "li2"]:
+            print(f"\n=== Metoda: {metoda.upper()} ===")
+            inv_aprox, k = aprox_inverse(A, metoda=metoda)
+            print(f"Număr de iterații: {k}")
+            if inv_aprox is not None:
+                print("Inversă aproximată:")
+                print(inv_aprox)
+
+                print("Eroare față de inversa exactă:")
+                print(np.linalg.norm(inv_aprox - inv_exact))
