@@ -75,26 +75,41 @@ def aprox_inverse(A, metoda="schultz", epsilon=1e-10, k_max=10000):
         print(f"Divergență după {k} pași")
         return None, k
 
+
+#construire inversa exacta dupa formula dedusa
+def genereaza_A_custom(n):
+    """
+    Generates a matrix A of size n x n where:
+    - The main diagonal (i, i) contains 1 (2^0).
+    - The diagonals (i, i+k) alternate between powers of 2 with signs: -2^1, 2^2, -2^3, ...
+    """
+    A = np.zeros((n, n))
+    for i in range(n):
+        A[i, i] = 1  # Main diagonal (2^0 = 1)
+        for j in range(i + 1, n):
+            power = j - i  # The power of 2 depends on the distance from the main diagonal
+            A[i, j] = (-1) ** power * (2 ** power)  # Alternating powers of 2
+    return A
 # Testare
 if __name__ == "__main__":
     A = np.array([[-24, 18, 5], [20, -15, -4], [-5, 4, 1]])
-    inv_exact = np.linalg.inv(A)
+    # inv_exact = np.linalg.inv(A)
 
-    for metoda in ["schultz", "li1", "li2"]:
-        print(f"\n=== Metoda: {metoda.upper()} ===")
-        inv_aprox, k = aprox_inverse(A, metoda=metoda)
+    # for metoda in ["schultz", "li1", "li2"]:
+    #     print(f"\n=== Metoda: {metoda.upper()} ===")
+    #     inv_aprox, k = aprox_inverse(A, metoda=metoda)
         
-        print(f"Număr de iterații: {k}")
-        if inv_aprox is not None:
-            print("Inversă aproximată:")
-            print(inv_aprox)
+    #     print(f"Număr de iterații: {k}")
+    #     if inv_aprox is not None:
+    #         print("Inversă aproximată:")
+    #         print(inv_aprox)
 
-            identitate = np.eye(A.shape[0])
-            eroare_identitate = norma_1(A @ inv_aprox - identitate)
-            print(f"|| A * A_aprox - I ||_1 = {eroare_identitate:.4e}")
+    #         identitate = np.eye(A.shape[0])
+    #         eroare_identitate = norma_1(A @ inv_aprox - identitate)
+    #         print(f"|| A * A_aprox - I ||_1 = {eroare_identitate:.4e}")
 
-            print("Eroare față de inversa exactă:")
-            print(np.linalg.norm(inv_aprox - inv_exact))
+    #         print("Eroare față de inversa exactă:")
+    #         print(np.linalg.norm(inv_aprox - inv_exact))
 
 
     print("\n=== Testare pentru matricele A_3, A_4, A_5 ===")
@@ -103,7 +118,9 @@ if __name__ == "__main__":
     A_5 = genereaza_A(5)
 
     for A in [A_3, A_4, A_5]:
-        inv_exact = np.linalg.inv(A)
+        # inv_exact = np.linalg.inv(A)
+        # print(inv_exact)
+        inv_exact = genereaza_A_custom(A.shape[0])
         print(inv_exact)
         for metoda in ["schultz", "li1", "li2"]:
             print(f"\n=== Metoda: {metoda.upper()} ===")
@@ -114,4 +131,4 @@ if __name__ == "__main__":
                 print(inv_aprox)
 
                 print("Eroare față de inversa exactă:")
-                print(np.linalg.norm(inv_aprox - inv_exact))
+                print(np.linalg.norm(inv_exact - inv_aprox))
