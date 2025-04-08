@@ -1,10 +1,10 @@
 import numpy as np
 
 def norma_1(A):
-    return np.max(np.sum(np.abs(A), axis=0))  # suma maximă a coloanelor
+    return np.max(np.sum(np.abs(A), axis=0))  # suma maxima a coloanelor
 
 def norma_inf(A):
-    return np.max(np.sum(np.abs(A), axis=1))  # suma maximă a rândurilor
+    return np.max(np.sum(np.abs(A), axis=1))  # suma maxima a randurilor
 
 def initializeaza_V0(A):
     A_T = A.T
@@ -62,7 +62,7 @@ def aprox_inverse(A, metoda, epsilon=1e-10, k_max=10000):
     if delta_V < epsilon:
         return V, k
     else:
-        print(f"Divergență după {k} pași")
+        print(f"Divergenta dupa {k} pasi")
         return None, k
 
 def genereaza_A(n):
@@ -114,10 +114,10 @@ if __name__ == "__main__":
         for metoda in ["schultz", "li1", "li2"]:
             print(f"\n=== Metoda: {metoda} ===")
             inv_aprox, k = aprox_inverse(A, metoda=metoda)
-            print(f"Număr de iterații: {k}")
+            print(f"Numar de iteratii: {k}")
             if inv_aprox is not None:
-                print("Inversă aproximată:")
+                print("Inversa aproximata:")
                 print(inv_aprox)
 
-                print("Eroare față de inversa exactă:")
+                print("Eroare fata de inversa exacta:")
                 print(np.linalg.norm(inv_exact - inv_aprox))
