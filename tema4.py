@@ -29,14 +29,18 @@ def metoda_schultz(V, B):
 def metoda_Li_1(V, A, B):
     I = np.eye(A.shape[0])
     C = matrice_ai_minus_AV(3, B, V)
-    return V @ (3 * I - A @ V @ C)
+    BVC = B @ V @ C
+    np.fill_diagonal(BVC, np.diag(BVC)+3)
+    return V @ BVC
 
 # formula: Li și Li - varianta 2
 def metoda_Li_2(V, A):
     I = np.eye(A.shape[0])
     E = I - V @ A
     F = 3 * I - V @ A
-    return (I + 0.25 * E @ F @ F) @ V
+    C = 0.25 * E @ F @ F
+    np.fill_diagonal(C, np.diag(C)+1)
+    return C @ V
 
 def aprox_inverse(A, metoda, epsilon=1e-10, k_max=10000):
     V = initializeaza_V0(A)
@@ -83,10 +87,14 @@ def genereaza_inversa_exacta_dupa_form_dedusa(n):
             A[i, j] = (-1) ** power * (2 ** power)  # (-1)^pow * 2^pow
     return A
 
+
 if __name__ == "__main__":
     print("\n=== Punctul 1&2 ===")
     
-    A = np.array([[-24, 18, 5], [20, -15, -4], [-5, 4, 1]])
+    # A = np.array([[-24, 18, 5], [20, -15, -4], [-5, 4, 1]])
+    np.random.seed(42)
+    A = np.random.randint(-10, 10, (3, 3))
+
     print("Inversa matricei A:")
     print(np.linalg.inv(A))
     for metoda in ["schultz", "li1", "li2"]:
@@ -107,7 +115,8 @@ if __name__ == "__main__":
     A_3 = genereaza_A(3)
     A_4 = genereaza_A(4)
     A_5 = genereaza_A(5)
-
+    # A_9 = genereaza_A(9)
+    # A_100 = genereaza_A(100)
     for A in [A_3, A_4, A_5]:
         inv_exact = genereaza_inversa_exacta_dupa_form_dedusa(A.shape[0])
         print(inv_exact)
