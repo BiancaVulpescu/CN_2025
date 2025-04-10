@@ -1,6 +1,14 @@
+# Medeleanu Daria 
+# Vulpescu Bianca
+# 310910401RSL221137
+# 310910401RSL221219
+# medeleanudaria14@gmail.com
+# vulpescubianca@gmail.com
+# dariaa8868 
+# bianca2544
+#procent de rezolvare cu AI: 20%
 #pentru metoda 2 de calcul : 
 #https://edu.info.uaic.ro/calcul-numeric/CN/lab/3/smr.pdf
-#procent de rezolvare cu AI 20%
 import numpy as np
 def citire_vector_rar (nume_fisier):
     vector_rar = {}
