@@ -186,7 +186,7 @@ def main():
     analizeaza_matrice("generată", n, d, rare)
     
     # Read and analyze matrix from file
-    nume_fisier = "/tema5files/m_rar_sim_2025_256.txt"
+    nume_fisier = "tema5files/m_rar_sim_2025_256.txt"
     n, d, rare = citire_matrice_met1(nume_fisier)
     analizeaza_matrice("citită", n, d, rare)
 
