@@ -29,22 +29,19 @@ def citire_matrice_met1(nume_fisier):
     return n, d, rare
 
 def genereaza_matrice_rara_simetrica(n, densitate=0.01):
-    d = [0] * n  # Diagonal
-    rare = {i: [] for i in range(n)}  # Non-zero elements
+    d = [0] * n 
+    rare = {i: [] for i in range(n)}  
     
-    # Calculate number of non-zero elements outside the diagonal
     nr_elemente_nenule = int((n * n * densitate - n) / 2)
     
-    # Generate diagonal elements (positive)
     for i in range(n):
         d[i] = random.uniform(1, 100)
     
-    # Generate off-diagonal elements
     pozitii_generate = set()
     while len(pozitii_generate) < nr_elemente_nenule:
         i = random.randint(0, n-1)
         j = random.randint(0, n-1)
-        
+        #generam pe partea superioara 
         if i >= j or (i, j) in pozitii_generate:
             continue
         
@@ -52,46 +49,46 @@ def genereaza_matrice_rara_simetrica(n, densitate=0.01):
         val = random.uniform(1, 100)
         
         rare[i].append((j, val))
-        rare[j].append((i, val))  # For symmetry
+        rare[j].append((i, val)) 
     
     return n, d, rare
 
-def salvare_matrice_rara(nume_fisier, n, d, rare):
-    with open(nume_fisier, "w") as f:
-        f.write(f"{n}\n")
+# def salvare_matrice_rara(nume_fisier, n, d, rare):
+#     with open(nume_fisier, "w") as f:
+#         f.write(f"{n}\n")
         
-        # Save diagonal elements
-        for i in range(n):
-            if d[i] != 0:
-                f.write(f"{d[i]}, {i}, {i}\n")
+#         # Save diagonal elements
+#         for i in range(n):
+#             if d[i] != 0:
+#                 f.write(f"{d[i]}, {i}, {i}\n")
         
-        # Save off-diagonal elements (upper triangle only)
-        for i in range(n):
-            for j, val in sorted(rare[i]):
-                if i < j:
-                    f.write(f"{val}, {i}, {j}\n")
+#         # Save off-diagonal elements (upper triangle only)
+#         for i in range(n):
+#             for j, val in sorted(rare[i]):
+#                 if i < j:
+#                     f.write(f"{val}, {i}, {j}\n")
 
-def verifica_simetrie(n, d, rare):
-    matrice_dict = {}
+def verifica_simetrie(n, rare):
     for i in range(n):
-        for j, val in rare[i]:
-            matrice_dict[(i, j)] = val
-    
-    for (i, j), val in matrice_dict.items():
-        if i != j:
-            if (j, i) not in matrice_dict or abs(matrice_dict[(j, i)] - val) > 1e-9:
-                return False
-    
+        for j, val_ij in rare[i]:
+            if j>i:
+                found = False
+                for k, val_ji in rare[j]:
+                    if k == i:
+                        if abs(val_ij - val_ji) > 1e-9:
+                            return False 
+                        found = True
+                        break
+                if not found:
+                    return False  
     return True
 
 def inmultire_matrice_vector(n, d, rare, v):
     rezultat = np.zeros(n)
     
-    # Contribution of the main diagonal
     for i in range(n):
         rezultat[i] += d[i] * v[i]
     
-    # Contribution of off-diagonal elements
     for i in range(n):
         for j, val in rare[i]:
             rezultat[i] += val * v[j]
@@ -99,7 +96,6 @@ def inmultire_matrice_vector(n, d, rare, v):
     return rezultat
 
 def metoda_puterii(n, d, rare, epsilon=1e-9, k_max=1000000):
-    # Initial random vector of Euclidean norm 1
     v = np.random.rand(n)
     v = v / np.linalg.norm(v)
     
@@ -156,18 +152,16 @@ def rezolva_sistem_svd(A, b):
     A_dagger, _, _, _, _ = calculeaza_pseudoinversa(A)
     return A_dagger.dot(b)
 
-def analizeaza_matrice(matrice_type, n, d, rare):
-    """Analyze matrix using power method - reduces redundant code"""
-    print(f"Matrice {matrice_type} de dimensiune {n}x{n}")
+def analizeaza_matrice(n, d, rare):
     
-    if verifica_simetrie(n, d, rare):
-        print(f"Matricea {matrice_type} este simetrică ✓")
+    if verifica_simetrie(n, rare):
+        print(f"Matricea este simetrică ✓")
     else:
-        print(f"Avertisment: Matricea {matrice_type} nu este simetrică!")
+        print(f"Avertisment: Matricea  nu este simetrică!")
     
     lambda_max, v_max, iteratii = metoda_puterii(n, d, rare)
     
-    print(f"Metoda puterii pentru matricea {matrice_type}:")
+    print(f"Metoda puterii:")
     print(f"  - Valoarea proprie de modul maxim: {lambda_max:.10f}")
     print(f"  - Număr de iterații: {iteratii}")
     
@@ -180,19 +174,14 @@ def main():
     print("Implementarea metodei puterii pentru matrici rare și simetrice")
     print("------------------------------------------------------------")
     
-    # 1. Generate and analyze sparse symmetric matrix
     n = 600
     _, d, rare = genereaza_matrice_rara_simetrica(n, densitate=0.01)
-    analizeaza_matrice("generată", n, d, rare)
+    analizeaza_matrice( n, d, rare)
     
-    # Read and analyze matrix from file
     nume_fisier = "tema5files/m_rar_sim_2025_256.txt"
     n, d, rare = citire_matrice_met1(nume_fisier)
-    analizeaza_matrice("citită", n, d, rare)
+    analizeaza_matrice( n, d, rare)
 
-    print("\n\n2. DESCOMPUNEREA DUPĂ VALORI SINGULARE PENTRU MATRICI DENSE (p > n)")
-    
-    # Generate dense matrix and solve system
     p, n = 800, 500
     print(f"Generare matrice densă de dimensiune {p}x{n}")
     
