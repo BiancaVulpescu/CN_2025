@@ -107,36 +107,33 @@ def calculeaza_norma_eroare(n, d, rare, lambda_max, v_max):
     lambda_v = lambda_max * v_max
     return np.linalg.norm(Av - lambda_v)
 
-def calculeaza_pseudoinversa(A):
+def calculeaza_pseudoinversa(A, n, p):
     # Calculate SVD decomposition: A = U S V^T
     U, s, Vt = svd(A, full_matrices=True)
     
-    # Determine matrix rank (number of positive singular values)
+    # rangul matricii 
     tol = max(A.shape) * np.finfo(float).eps * np.max(s)
     rang = np.sum(s > tol)
     
-    # Calculate S^† matrix
-    s_inv = np.zeros((A.shape[1], A.shape[0]))
+    s_inv = np.zeros((n, p))
     for i in range(rang):
         s_inv[i, i] = 1.0 / s[i]
     
-    # Calculate pseudoinverse A^† = V S^† U^T
-    A_dagger = Vt.T.dot(s_inv).dot(U.T)
+    A_pseudo = (Vt.T).dot(s_inv).dot(U.T)
     
-    return A_dagger, rang, s, U, Vt
+    return A_pseudo, rang, s, U, Vt
 
 def calculeaza_numar_conditionare(s):
     tol = np.finfo(float).eps * np.max(s) * max(s.shape)
     s_pozitive = s[s > tol]
     
     if len(s_pozitive) == 0:
-        return float('inf')  # Singular matrix
+        return float('infinit')  # Singular matrix
     
     return np.max(s) / np.min(s_pozitive)
 
-def rezolva_sistem_svd(A, b):
-    A_dagger, _, _, _, _ = calculeaza_pseudoinversa(A)
-    return A_dagger.dot(b)
+def rezolva_sistem_svd(A_pseudo, b):
+    return A_pseudo.dot(b)
 
 def analizeaza_matrice(n, d, rare):
     if verifica_simetrie(n, rare):
@@ -153,21 +150,20 @@ def analizeaza_matrice(n, d, rare):
     eroare = calculeaza_norma_eroare(n, d, rare, lambda_max, v_max)
     print(f"  - Norma erorii ||Av^max - λ_max * v^max||: {eroare:.10e}")
     
-    return lambda_max, v_max, iteratii
 
 def main():
     
-    # Cazul 1: p = n > 500 - matrice patratica, rara si simetrica
-    n = 600
-    _, d, rare = genereaza_matrice_rara_simetrica(n, densitate=0.01)
-    analizeaza_matrice( n, d, rare)
+    # # Cazul 1: p = n > 500 - matrice patratica, rara si simetrica
+    # n = 600
+    # _, d, rare = genereaza_matrice_rara_simetrica(n, densitate=0.01)
+    # analizeaza_matrice( n, d, rare)
     
-    # Cazul 2: Citire matrice din fisier
-    file_names = [f for f in os.listdir("tema5files") if os.path.isfile(os.path.join("tema5files", f))]
-    for f in file_names:
-        nume_fisier = f"tema5files/{f}"
-        n, d, rare = citire_matrice_met1(nume_fisier)
-        analizeaza_matrice( n, d, rare)
+    # # Cazul 2: Citire matrice din fisier
+    # file_names = [f for f in os.listdir("tema5files") if os.path.isfile(os.path.join("tema5files", f))]
+    # for f in file_names:
+    #     nume_fisier = f"tema5files/{f}"
+    #     n, d, rare = citire_matrice_met1(nume_fisier)
+    #     analizeaza_matrice( n, d, rare)
 
     #Cazul 3 p > n - matrice clasica, nerara
     p, n = 800, 500
@@ -176,9 +172,8 @@ def main():
     b = np.random.rand(p) * 100
     
     # Calculate SVD decomposition and pseudoinverse
-    A_dagger, rang, valori_singulare, U, Vt = calculeaza_pseudoinversa(A)
-    print(f"Descompunerea SVD calculata")
-    
+    A_pseudo, rang, valori_singulare, U, Vt = calculeaza_pseudoinversa(A, n, p)
+
     print(f"\nValorile singulare ale matricei A:")
     print(valori_singulare)
     
@@ -186,17 +181,12 @@ def main():
     
     numar_conditionare = calculeaza_numar_conditionare(valori_singulare)
     print(f"\nNumarul de conditionare al matricei A: {numar_conditionare:.10e}")
-    
-    x = rezolva_sistem_svd(A, b)
-    print(f"\nSistemul Ax = b rezolvat")
-    
+    print("\nMoore-Penrose pseudoinversa A† = V S† U^T:")
+    print(f"Dimensiune: {A_pseudo}")
+
+    x = rezolva_sistem_svd(A_pseudo, b)
     eroare_sistem = np.linalg.norm(b - A.dot(x))
     print(f"Norma erorii ||b - Ax||: {eroare_sistem:.10e}")
-    
-    print("\nMoore-Penrose pseudoinversa A† = V S† U^T:")
-    print(f"Dimensiune: {A_dagger.shape}")
-    
-    print("\nDESCOMPUNEREA SVD A FOST REALIZATA CU SUCCES!")
 
 if __name__ == "__main__":
     main()
