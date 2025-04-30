@@ -53,21 +53,6 @@ def genereaza_matrice_rara_simetrica(n, densitate=0.01):
     
     return n, d, rare
 
-# def salvare_matrice_rara(nume_fisier, n, d, rare):
-#     with open(nume_fisier, "w") as f:
-#         f.write(f"{n}\n")
-        
-#         # Save diagonal elements
-#         for i in range(n):
-#             if d[i] != 0:
-#                 f.write(f"{d[i]}, {i}, {i}\n")
-        
-#         # Save off-diagonal elements (upper triangle only)
-#         for i in range(n):
-#             for j, val in sorted(rare[i]):
-#                 if i < j:
-#                     f.write(f"{val}, {i}, {j}\n")
-
 def verifica_simetrie(n, rare):
     for i in range(n):
         for j, val_ij in rare[i]:
