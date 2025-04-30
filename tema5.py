@@ -181,7 +181,7 @@ def main():
     
     numar_conditionare = calculeaza_numar_conditionare(valori_singulare)
     print(f"\nNumarul de conditionare al matricei A: {numar_conditionare:.10e}")
-    print("\nMoore-Penrose pseudoinversa A† = V S† U^T:")
+    print("\nMoore-Penrose pseudoinversa:")
     print(f"Dimensiune: {A_pseudo}")
 
     x = rezolva_sistem_svd(A_pseudo, b)
