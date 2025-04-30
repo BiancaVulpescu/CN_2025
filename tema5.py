@@ -2,6 +2,7 @@ import os
 import numpy as np
 import random
 from numpy.linalg import svd
+from numpy.linalg import matrix_rank
 
 def citire_matrice_met1(nume_fisier):
     with open(nume_fisier, "r") as f:
@@ -144,7 +145,7 @@ def analizeaza_matrice(n, d, rare):
     lambda_max, v_max, iteratii = metoda_puterii(n, d, rare)
     
     print(f"Metoda puterii:")
-    print(f"  - Valoarea proprie de modul maxim: {lambda_max:.10f}")
+    print(f"  - Valoarea proprie de modul maxim: {lambda_max:.15f}")
     print(f"  - Numar de iteratii: {iteratii}")
     
     eroare = calculeaza_norma_eroare(n, d, rare, lambda_max, v_max)
@@ -153,17 +154,17 @@ def analizeaza_matrice(n, d, rare):
 
 def main():
     
-    # # Cazul 1: p = n > 500 - matrice patratica, rara si simetrica
-    # n = 600
-    # _, d, rare = genereaza_matrice_rara_simetrica(n, densitate=0.01)
-    # analizeaza_matrice( n, d, rare)
+    # Cazul 1: p = n > 500 - matrice patratica, rara si simetrica
+    n = 600
+    _, d, rare = genereaza_matrice_rara_simetrica(n, densitate=0.01)
+    analizeaza_matrice( n, d, rare)
     
-    # # Cazul 2: Citire matrice din fisier
-    # file_names = [f for f in os.listdir("tema5files") if os.path.isfile(os.path.join("tema5files", f))]
-    # for f in file_names:
-    #     nume_fisier = f"tema5files/{f}"
-    #     n, d, rare = citire_matrice_met1(nume_fisier)
-    #     analizeaza_matrice( n, d, rare)
+    # Cazul 2: Citire matrice din fisier
+    file_names = [f for f in os.listdir("tema5files") if os.path.isfile(os.path.join("tema5files", f))]
+    for f in file_names:
+        nume_fisier = f"tema5files/{f}"
+        n, d, rare = citire_matrice_met1(nume_fisier)
+        analizeaza_matrice( n, d, rare)
 
     #Cazul 3 p > n - matrice clasica, nerara
     p, n = 800, 500
@@ -178,6 +179,8 @@ def main():
     print(valori_singulare)
     
     print(f"\nRangul matricei A: {rang}")
+    
+    # print(f"Rangul matricii A: {matrix_rank(A)}")
     
     numar_conditionare = calculeaza_numar_conditionare(valori_singulare)
     print(f"\nNumarul de conditionare al matricei A: {numar_conditionare:.10e}")
