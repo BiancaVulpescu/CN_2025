@@ -4,21 +4,18 @@ import matplotlib.pyplot as plt
 def metoda_celor_mai_mici_patrate(x_points, y_points, m):
     n = len(x_points) - 1
     
-    # Build the matrix B
     B = np.zeros((m+1, m+1))
     for i in range(m+1):
         for j in range(m+1):
             B[i, j] = sum(x_points[k] ** (i+j) for k in range(n+1))
     
-    # Build the right side vector f
     f = np.zeros(m+1)
     for i in range(m+1):
         f[i] = sum(y_points[k] * (x_points[k] ** i) for k in range(n+1))
     
-    # Solve the linear system Ba = f
     a = np.linalg.solve(B, f)
     
-    return a[::-1]  # Return in descending order (aₘ, aₘ₋₁, ..., a₁, a₀)
+    return a[::-1]  #returnez in ordine inversa
 
 def horner_eval(coeffs, x):
     result = 0
@@ -50,11 +47,11 @@ def polynomial_approximation(x_points, y_points, x_eval, m, true_func=None):
     
     p_eval = horner_eval(coeffs, x_eval)
     
-    errors_sum = sum(abs(horner_eval(coeffs, x) - y) for x, y in zip(x_points, y_points))
-    
     print(f"Polynomial degree: {m}")
     print(f"Polynomial: P(x) = {polynomial_string(coeffs)}")
     print(f"P({x_eval}) = {p_eval:.6f}")
+    
+    errors_sum = sum(abs(horner_eval(coeffs, x) - y) for x, y in zip(x_points, y_points))
     
     if true_func:
         true_value = true_func(x_eval)
@@ -69,17 +66,13 @@ def polynomial_approximation(x_points, y_points, x_eval, m, true_func=None):
 def plot_approximation(x_points, y_points, coeffs, true_func=None):
     plt.figure(figsize=(10, 6))
     
-    # Plot the original points
     plt.scatter(x_points, y_points, color='red', label='Data points')
     
-    # Create a smooth x range for plotting
     x_range = np.linspace(min(x_points), max(x_points), 1000)
     
-    # Calculate polynomial values
     p_values = [horner_eval(coeffs, x) for x in x_range]
-    plt.plot(x_range, p_values, 'b-', label='Polynomial approximation')
+    plt.plot(x_range, p_values, 'r-', label='Polynomial approximation')
     
-    # Plot the true function if provided
     if true_func:
         true_values = [true_func(x) for x in x_range]
         plt.plot(x_range, true_values, 'g--', label='True function')
@@ -239,11 +232,9 @@ def f2b(x):
 def f2c(x):
     return np.sin(x)**2 - np.cos(x)**2
 
-# For trigonometric interpolation: use odd number of points (n = 2m)
-m_trig = 3  # This will give 2m+1 = 7 points
+m_trig = 3  
 x_points_trig = np.linspace(0, 2*np.pi, 2*m_trig+1, endpoint=False)  # n = 2m points
 
-# First trigonometric example
 print("\nExample 2a: f(x) = sin(x) - cos(x)")
 print("="*50)
 y_points_trig = [f2a(x) for x in x_points_trig]
@@ -251,14 +242,12 @@ x_eval_trig = np.pi/4
 trigonometric_interpolation(x_points_trig, y_points_trig, x_eval_trig, f2a)
 print("="*50)
 
-# Second trigonometric example
 print("\nExample 2b: f(x) = sin(2x) + sin(x) + cos(3x)")
 print("="*50)
 y_points_trig = [f2b(x) for x in x_points_trig]
 trigonometric_interpolation(x_points_trig, y_points_trig, x_eval_trig, f2b)
 print("="*50)
 
-# Third trigonometric example
 print("\nExample 2c: f(x) = sin²(x) - cos²(x)")
 print("="*50)
 y_points_trig = [f2c(x) for x in x_points_trig]
