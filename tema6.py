@@ -90,12 +90,10 @@ def trigonometric_interpolation(x_points, y_points, x_eval, true_func=None):
     if n % 2 != 0:
         raise ValueError("Number of points must be odd (n = 2m)")
     
-    m = n // 2  # m in the formula
+    m = n // 2 
     
-    # Build the T matrix as described in image 3
     T = np.zeros((n+1, n+1))
     
-    # Define the basis functions
     def phi_0(x):
         return 1
     
@@ -105,30 +103,21 @@ def trigonometric_interpolation(x_points, y_points, x_eval, true_func=None):
     def phi_2m_k(x, k):
         return np.sin(k * x)
     
-    # Fill the T matrix
-    for i in range(n+1):  # For each row (point)
-        # First column is always 1
+    for i in range(n+1):  
         T[i, 0] = phi_0(x_points[i])
         
-        # Next columns alternate between sin and cos
         for k in range(1, m+1):
-            # cos(kx) columns
-            T[i, 2*k-1] = phi_k(x_points[i], k)
-            # sin(kx) columns
-            T[i, 2*k] = phi_2m_k(x_points[i], k)
+            T[i, 2*k-1] = phi_2m_k(x_points[i], k) #sin pt coloanele impare
+            T[i, 2*k] = phi_k(x_points[i], k) #cos pt coloanele pare
     
-    # Create Y vector with function values
     Y = np.array(y_points)
     
-    # Solve the system T * X = Y
     X = np.linalg.solve(T, Y)
-    
-    # Extract coefficients
+
     a0 = X[0]
-    a_coefs = X[1::2][:m]  # take every other element starting from index 1
-    b_coefs = X[2::2][:m]  # take every other element starting from index 2
-    
-    # Function to evaluate trigonometric approximation at a point
+    a_coefs = X[2::2][:m]  # coeficientii pe linii pare
+    b_coefs = X[1::2][:m]  # coeficientii pe linii impare
+    print(a_coefs, b_coefs)
     def eval_trig(x):
         result = a0
         for k in range(1, m+1):
@@ -136,16 +125,10 @@ def trigonometric_interpolation(x_points, y_points, x_eval, true_func=None):
             result += b_coefs[k-1] * np.sin(k * x)
         return result
     
-    # Evaluate at the requested point
     t_eval = eval_trig(x_eval)
     
-    # Calculate sum of absolute errors
-    errors_sum = sum(abs(eval_trig(x) - y) for x, y in zip(x_points, y_points))
-    
-    # Print results
     print(f"Trigonometric interpolation with m = {m}")
     
-    # Format the trigonometric series as a string
     trig_string = f"{a0:.4f}"
     for k in range(1, m+1):
         if a_coefs[k-1] != 0:
@@ -156,30 +139,23 @@ def trigonometric_interpolation(x_points, y_points, x_eval, true_func=None):
             trig_string += term.replace("+ -", "- ")
     
     print(f"T(x) = {trig_string}")
-    print(f"T({x_eval}) = {t_eval:.6f}")
+    print(f"T({x_eval}) = {t_eval:.15f}")
     
     if true_func:
         true_value = true_func(x_eval)
         print(f"|T({x_eval}) - f({x_eval})| = |{t_eval:.6f} - {true_value:.6f}| = {abs(t_eval - true_value):.6f}")
     
-    print(f"Sum of |T(xi) - yi| = {errors_sum:.6f}")
-    
-    # Plot the results
     plot_trig_approximation(x_points, y_points, a0, a_coefs, b_coefs, m, true_func)
     
     return (a0, a_coefs, b_coefs), t_eval, errors_sum
 
 def plot_trig_approximation(x_points, y_points, a0, a_coefs, b_coefs, m, true_func=None):
-    """Plot the original points, the trigonometric approximation and the true function if provided"""
     plt.figure(figsize=(10, 6))
     
-    # Plot the original points
     plt.scatter(x_points, y_points, color='red', label='Data points')
     
-    # Create a smooth x range for plotting - over the full period
     x_range = np.linspace(0, 2*np.pi, 1000)
     
-    # Function to evaluate trigonometric series
     def eval_trig(x):
         result = a0
         for k in range(1, m+1):
@@ -187,11 +163,9 @@ def plot_trig_approximation(x_points, y_points, a0, a_coefs, b_coefs, m, true_fu
             result += b_coefs[k-1] * np.sin(k * x)
         return result
     
-    # Calculate trigonometric values
     t_values = [eval_trig(x) for x in x_range]
-    plt.plot(x_range, t_values, 'b-', label='Trigonometric approximation')
-    
-    # Plot the true function if provided
+    plt.plot(x_range, t_values, 'r-', label='Trigonometric approximation')
+
     if true_func:
         true_values = [true_func(x) for x in x_range]
         plt.plot(x_range, true_values, 'g--', label='True function')
