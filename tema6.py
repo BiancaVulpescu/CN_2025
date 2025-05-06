@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def least_squares_polynomial(x_points, y_points, m):
+def metoda_celor_mai_mici_patrate(x_points, y_points, m):
     n = len(x_points) - 1
     
     # Build the matrix B
@@ -46,16 +46,12 @@ def polynomial_string(coeffs):
 
 def polynomial_approximation(x_points, y_points, x_eval, m, true_func=None):
 
-    # Calculate polynomial coefficients using least squares
-    coeffs = least_squares_polynomial(x_points, y_points, m)
+    coeffs = metoda_celor_mai_mici_patrate(x_points, y_points, m)
     
-    # Evaluate polynomial at x_eval using Horner's scheme
     p_eval = horner_eval(coeffs, x_eval)
     
-    # Calculate the sum of absolute errors at interpolation points
     errors_sum = sum(abs(horner_eval(coeffs, x) - y) for x, y in zip(x_points, y_points))
     
-    # Print results
     print(f"Polynomial degree: {m}")
     print(f"Polynomial: P(x) = {polynomial_string(coeffs)}")
     print(f"P({x_eval}) = {p_eval:.6f}")
@@ -66,10 +62,34 @@ def polynomial_approximation(x_points, y_points, x_eval, m, true_func=None):
     
     print(f"Sum of |P(xi) - yi| = {errors_sum:.6f}")
     
-    # Plot the results
     plot_approximation(x_points, y_points, coeffs, true_func)
     
     return coeffs, p_eval, errors_sum
+
+def plot_approximation(x_points, y_points, coeffs, true_func=None):
+    plt.figure(figsize=(10, 6))
+    
+    # Plot the original points
+    plt.scatter(x_points, y_points, color='red', label='Data points')
+    
+    # Create a smooth x range for plotting
+    x_range = np.linspace(min(x_points), max(x_points), 1000)
+    
+    # Calculate polynomial values
+    p_values = [horner_eval(coeffs, x) for x in x_range]
+    plt.plot(x_range, p_values, 'b-', label='Polynomial approximation')
+    
+    # Plot the true function if provided
+    if true_func:
+        true_values = [true_func(x) for x in x_range]
+        plt.plot(x_range, true_values, 'g--', label='True function')
+    
+    plt.title('Function Approximation using Least Squares Polynomial')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 def trigonometric_interpolation(x_points, y_points, x_eval, true_func=None):
 
@@ -190,53 +210,23 @@ def plot_trig_approximation(x_points, y_points, a0, a_coefs, b_coefs, m, true_fu
     plt.grid(True)
     plt.show()
 
-def plot_approximation(x_points, y_points, coeffs, true_func=None):
-    """Plot the original points, the approximation polynomial and the true function if provided"""
-    plt.figure(figsize=(10, 6))
-    
-    # Plot the original points
-    plt.scatter(x_points, y_points, color='red', label='Data points')
-    
-    # Create a smooth x range for plotting
-    x_range = np.linspace(min(x_points), max(x_points), 1000)
-    
-    # Calculate polynomial values
-    p_values = [horner_eval(coeffs, x) for x in x_range]
-    plt.plot(x_range, p_values, 'b-', label='Polynomial approximation')
-    
-    # Plot the true function if provided
-    if true_func:
-        true_values = [true_func(x) for x in x_range]
-        plt.plot(x_range, true_values, 'g--', label='True function')
-    
-    plt.title('Function Approximation using Least Squares Polynomial')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
 
 # Example 1: f(x) = x⁴ - 12x³ + 30x² + 12 on [1, 5]
 def f1(x):
     return x**4 - 12*x**3 + 30*x**2 + 12
-
-# Generate points for example 1
 x0, xn = 1, 5
-n = 10  # Number of points - 1
+n = 10  
 x_points = np.linspace(x0, xn, n+1)
 y_points = [f1(x) for x in x_points]
 
-# Point to evaluate
 x_eval = 3.0
 
-# Run the approximation with different polynomial degrees
-print("Example 1: f(x) = x⁴ - 12x³ + 30x² + 12")
+print("f(x) = x⁴ - 12x³ + 30x² + 12")
 print("="*50)
 for m in [2, 3, 4, 5]:
     coeffs, p_eval, errors_sum = polynomial_approximation(x_points, y_points, x_eval, m, f1)
     print("="*50)
 
-# Example 2: Trigonometric functions
 # Example 2a: f(x) = sin(x) - cos(x) on [0, 2π]
 def f2a(x):
     return np.sin(x) - np.cos(x)
