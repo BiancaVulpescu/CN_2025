@@ -2,17 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def least_squares_polynomial(x_points, y_points, m):
-    """
-    Calculate polynomial approximation using least squares method
-    
-    Parameters:
-        x_points: list of x coordinates (n+1 points)
-        y_points: list of y values at x_points
-        m: degree of the polynomial
-    
-    Returns:
-        coefficients of the polynomial (a₀, a₁, ..., aₘ)
-    """
     n = len(x_points) - 1
     
     # Build the matrix B
@@ -32,23 +21,12 @@ def least_squares_polynomial(x_points, y_points, m):
     return a[::-1]  # Return in descending order (aₘ, aₘ₋₁, ..., a₁, a₀)
 
 def horner_eval(coeffs, x):
-    """
-    Evaluate polynomial using Horner's scheme
-    
-    Parameters:
-        coeffs: list of coefficients [aₘ, aₘ₋₁, ..., a₁, a₀]
-        x: point where to evaluate the polynomial
-    
-    Returns:
-        value of polynomial at point x
-    """
     result = 0
     for coef in coeffs:
         result = result * x + coef
     return result
 
 def polynomial_string(coeffs):
-    """Generate a readable string representation of the polynomial"""
     m = len(coeffs) - 1
     terms = []
     
@@ -67,17 +45,7 @@ def polynomial_string(coeffs):
     return " + ".join(terms).replace("+ -", "- ")
 
 def polynomial_approximation(x_points, y_points, x_eval, m, true_func=None):
-    """
-    Main function to approximate a function using polynomial least squares
-    and evaluate it at a given point
-    
-    Parameters:
-        x_points: list of x coordinates
-        y_points: list of y values at x_points
-        x_eval: point where to evaluate the approximation
-        m: degree of the polynomial
-        true_func: actual function (if available)
-    """
+
     # Calculate polynomial coefficients using least squares
     coeffs = least_squares_polynomial(x_points, y_points, m)
     
@@ -104,18 +72,7 @@ def polynomial_approximation(x_points, y_points, x_eval, m, true_func=None):
     return coeffs, p_eval, errors_sum
 
 def trigonometric_interpolation(x_points, y_points, x_eval, true_func=None):
-    """
-    Approximates periodic functions using trigonometric interpolation
-    
-    Parameters:
-        x_points: list of x coordinates (2m+1 points in [0, 2π])
-        y_points: list of y values at x_points
-        x_eval: point where to evaluate the approximation
-        true_func: actual function (if available)
-    
-    Returns:
-        coefficients, approximation at x_eval, error sum
-    """
+
     n = len(x_points) - 1
     if n % 2 != 0:
         raise ValueError("Number of points must be odd (n = 2m)")
