@@ -81,39 +81,78 @@ def save_roots_to_file(roots, filename="radacini.txt"):
             f.write(f"{root:.10f}\n")  # scrie cu precizie mare
     print(f"Rădăcinile distincte au fost salvate în {filename}")
 
-if __name__ == "__main__":
-    # Exemplu: P(x) = x^3 - 6x^2 + 11x - 6 = (x-1)(x-2)(x-3)
-    coeffs = [1, -6, 11, -6]  # [a_n, a_{n-1}, ..., a_1, a_0]
+# if __name__ == "__main__":
+#     # Exemplu: P(x) = x^3 - 6x^2 + 11x - 6 = (x-1)(x-2)(x-3)
+#     coeffs = [1, -6, 11, -6]  # [a_n, a_{n-1}, ..., a_1, a_0]
     
-    R = compute_bounds_R(coeffs)
-    print(f"Toate radacinile reale se gasesc in intervalul: [-{R}, {R}]")
+#     R = compute_bounds_R(coeffs)
+#     print(f"Toate radacinile reale se gasesc in intervalul: [-{R}, {R}]")
     
-    # Gasim radacinile reale din intervalul [-R, R]
-    roots = find_all_real_roots(coeffs, interval=(-R, R), epsilon=1e-6, k_max=1000)
-    print(f"Am gasit {len(roots)} radacini reale: {roots}")
-    save_roots_to_file(roots)
+#     # Gasim radacinile reale din intervalul [-R, R]
+#     roots = find_all_real_roots(coeffs, interval=(-R, R), epsilon=1e-6, k_max=1000)
+#     print(f"Am gasit {len(roots)} radacini reale: {roots}")
+#     save_roots_to_file(roots)
 
-    x0 = 1.5
-    root, iterations, converged = halley_method(coeffs, x0)
-    print(f"Starting from x0 = {x0}")
-    print(f"radacina aproximata este: {root}")
-    print(f"nr de iteratii: {iterations}")
-    print(f"convergenta?: {converged}")
+#     x0 = 1.5
+#     root, iterations, converged = halley_method(coeffs, x0)
+#     print(f"Starting from x0 = {x0}")
+#     print(f"radacina aproximata este: {root}")
+#     print(f"nr de iteratii: {iterations}")
+#     print(f"convergenta?: {converged}")
     
-    # x = np.linspace(-R, R, 1000)
-    # p = np.polynomial.Polynomial(coeffs[::-1])  
-    # y = p(x)
     
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(x, y)
-    # plt.grid(True)
-    # plt.axhline(y=0, color='r', linestyle='-', alpha=0.3)
-    # plt.scatter(roots, [0]*len(roots), color='red', s=50)
-    # plt.title(f"Polynomial P(x) and its real roots")
-    # plt.xlabel('x')
-    # plt.ylabel('P(x)')
-    # plt.ylim(-10, 10)  # Adjust as needed
-    
-    # # Show the plot
-    # plt.tight_layout()
-    # plt.show()
+
+#     coeffs = [42, -55, -42, 49, -6]
+#     coeffs = [8, -38, 49, -22, 3]
+#     coeffs = [1, -6, 13, -12, 4]
+
+
+
+
+def main():
+    coeffs_list = [
+        [1, -6, 11, -6],         # P(x) = (x-1)(x-2)(x-3)
+        [42, -55, -42, 49, -6],
+        [8, -38, 49, -22, 3],
+        [1, -6, 13, -12, 4]
+    ]
+
+    for idx, coeffs in enumerate(coeffs_list, start=1):
+        print(f"\n=== Polynomial {idx} ===")
+        print(f"Coefficients: {coeffs}")
+
+        R = compute_bounds_R(coeffs)
+        print(f"Toate radacinile reale se gasesc in intervalul: [-{R}, {R}]")
+
+        roots = find_all_real_roots(coeffs, interval=(-R, R), epsilon=1e-6, k_max=1000)
+        print(f"Am gasit {len(roots)} radacini reale: {roots}")
+        save_roots_to_file(roots, filename=f"roots_poly_{idx}.txt")
+
+        x0 = 1.5  
+        root, iterations, converged = halley_method(coeffs, x0)
+        print(f"Halley start x0 = {x0}")
+        print(f"radacina aproximata este: {root}")
+        print(f"nr de iteratii: {iterations}")
+        print(f"convergenta?: {converged}")
+
+        
+        # x = np.linspace(-R, R, 1000)
+        # p = np.polynomial.Polynomial(coeffs[::-1])  
+        # y = p(x)
+        
+        # plt.figure(figsize=(10, 6))
+        # plt.plot(x, y)
+        # plt.grid(True)
+        # plt.axhline(y=0, color='r', linestyle='-', alpha=0.3)
+        # plt.scatter(roots, [0]*len(roots), color='red', s=50)
+        # plt.title(f"Polynomial P(x) and its real roots")
+        # plt.xlabel('x')
+        # plt.ylabel('P(x)')
+        # plt.ylim(-10, 10)  # Adjust as needed
+        
+        # # Show the plot
+        # plt.tight_layout()
+        # plt.show()
+
+if __name__ == "__main__":
+    main()
