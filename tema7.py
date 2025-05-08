@@ -1,20 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import random
 import math
-from scipy.misc import derivative
 
 class Polynomial:
     def __init__(self, coefficients):
-        """
-        Initialize a polynomial with coefficients [a₀, a₁, a₂, ..., aₙ]
-        where P(x) = a₀xⁿ + a₁xⁿ⁻¹ + ... + aₙ₋₁x + aₙ
-        """
         self.coefficients = coefficients
         self.degree = len(coefficients) - 1
     
     def evaluate(self, x):
-        """Evaluate polynomial at point x using Horner's method"""
+        """Evaluate polynomial at point x using Horner's method as specified in image 2"""
         result = 0
         for coef in self.coefficients:
             result = result * x + coef
@@ -32,60 +26,46 @@ class Polynomial:
         return self.derivative().derivative()
 
 def halley_method(f, df, ddf, x0, epsilon=1e-10, k_max=1000):
-    """
-    Implementation of Halley's method for finding roots
-    
-    Parameters:
-    - f: Function to find root of
-    - df: First derivative of f
-    - ddf: Second derivative of f
-    - x0: Initial guess
-    - epsilon: Precision
-    - k_max: Maximum number of iterations
-    
-    Returns:
-    - x: Approximated root
-    - k: Number of iterations performed
-    - convergence: True if converged, False otherwise
-    """
     x = x0
     k = 1
     
     iterations = [(x, f(x))]
     
+    # Main loop as in the pseudocode
     while True:
         # Calculate A = 2[f'(x)]² - f(x)f''(x)
         A = 2 * df(x)**2 - f(x) * ddf(x)
         
-        # Check if A is too small - algorithm might be unstable
+        # Check if A is too small (As in the pseudocode: if (|A| < ε) STOP)
         if abs(A) < epsilon:
             return x, k, True, iterations
         
         # Calculate Δ = 2f(x)f'(x)/A
         delta = 2 * f(x) * df(x) / A
         
-        # Update x
+        # Update x = x - Δ
         x = x - delta
         
         # Record this iteration
         iterations.append((x, f(x)))
         
-        # Increment counter
+        # Increment counter: k++
         k += 1
         
-        # Check convergence criteria
+        # Check convergence criteria (|Δ| < ε)
         if abs(delta) < epsilon:
             return x, k, True, iterations
         
         # Check maximum iterations or if delta is too large (divergence)
-        if k > k_max or abs(delta) > 1e8:
-            return x, k, False, iterations
+        # while (|Δ| ≥ ε și k ≤ kmax și |Δ| ≤ 10⁸)
+        if not (abs(delta) >= epsilon and k <= k_max and abs(delta) <= 1e8):
+            # If we exit the loop without converging, check why
+            if abs(delta) < epsilon:
+                return x, k, True, iterations  # Converged
+            else:
+                return x, k, False, iterations  # Diverged or exceeded max iterations
 
 def estimate_root_bounds(poly, padding=1.0):
-    """
-    Estimate bounds [-R, R] that contain all real roots
-    using a simple upper bound formula
-    """
     coeffs = poly.coefficients.copy()
     lead_coeff = abs(coeffs[0])
     max_coeff = max(abs(c) for c in coeffs[1:])
@@ -99,10 +79,7 @@ def estimate_root_bounds(poly, padding=1.0):
     return -R, R
 
 def find_all_roots(poly, epsilon=1e-10, k_max=1000, num_start_points=20):
-    """
-    Find all real roots of a polynomial using Halley's method
-    with multiple starting points
-    """
+    # Calculate the interval [-R, R] containing all real roots
     lower_bound, upper_bound = estimate_root_bounds(poly)
     
     # First derivative
@@ -116,7 +93,7 @@ def find_all_roots(poly, epsilon=1e-10, k_max=1000, num_start_points=20):
     df = lambda x: poly_prime.evaluate(x)
     ddf = lambda x: poly_double_prime.evaluate(x)
     
-    # Generate starting points
+    # Generate starting points within the interval
     start_points = np.linspace(lower_bound, upper_bound, num_start_points)
     
     # Find roots from different starting points
@@ -127,7 +104,8 @@ def find_all_roots(poly, epsilon=1e-10, k_max=1000, num_start_points=20):
         root, iterations, converged, iter_data = halley_method(f, df, ddf, x0, epsilon, k_max)
         
         if converged:
-            # Check if this root is already found (within epsilon)
+            # Check if this root is already found (within epsilon tolerance)
+            # This addresses the requirement to identify distinct roots
             is_new_root = True
             for existing_root in found_roots:
                 if abs(root - existing_root) < epsilon:
@@ -293,15 +271,80 @@ def save_results_to_file(polynomial_results, function_result):
             f.write("Method did not converge\n")
 
 def bonus_implementation():
-    """
-    Implement N⁴ and N⁵ methods for approximating roots
-    as mentioned in the bonus section
-    """
-    # This would be implemented if needed, based on the article referenced
-    pass
+
+    class NthOrderMethods:
+        @staticmethod
+        def n4_method(f, df, ddf, d3f, x0, epsilon=1e-10, k_max=1000):
+            x = x0
+            k = 1
+            
+            while k <= k_max:
+                f_val = f(x)
+                df_val = df(x)
+                
+                if abs(df_val) < epsilon:
+                    return x, k, False  # Possible issue with division by zero
+                
+                ddf_val = ddf(x)
+                d3f_val = d3f(x)
+                
+                # N⁴ correction term
+                numerator = f_val * (2 * df_val * ddf_val)
+                denominator = 2 * df_val**3
+                correction = numerator / denominator
+                
+                # Additional N⁴ term involving third derivative
+                extra_term = (f_val**2 * d3f_val) / (6 * df_val**3)
+                
+                delta = f_val / df_val + correction + extra_term
+                
+                x_new = x - delta
+                
+                if abs(x_new - x) < epsilon:
+                    return x_new, k, True
+                
+                x = x_new
+                k += 1
+                
+            return x, k, False
+        
+        @staticmethod
+        def n5_method(f, df, ddf, d3f, d4f, x0, epsilon=1e-10, k_max=1000):
+            x = x0
+            k = 1
+            
+            while k <= k_max:
+                f_val = f(x)
+                df_val = df(x)
+                
+                if abs(df_val) < epsilon:
+                    return x, k, False  # Possible issue with division by zero
+                
+                ddf_val = ddf(x)
+                d3f_val = d3f(x)
+                d4f_val = d4f(x)
+
+                newton_term = f_val / df_val
+                second_term = (f_val * ddf_val) / (2 * df_val**2)
+                third_term = (f_val**2 * d3f_val) / (6 * df_val**3)
+                fourth_term = (f_val**3 * d4f_val) / (24 * df_val**4)
+                
+                delta = newton_term - second_term + third_term - fourth_term
+                
+                x_new = x - delta
+                
+                if abs(x_new - x) < epsilon:
+                    return x_new, k, True
+                
+                x = x_new
+                k += 1
+                
+            return x, k, False
+    
+    return NthOrderMethods
 
 def main():
-    # Set precision (epsilon) and maximum iterations
+    # Set precision (epsilon) and maximum iterations as required in image 3
     epsilon = 1e-10
     k_max = 1000
     
@@ -316,6 +359,10 @@ def main():
     
     print("\nResults have been saved to 'halley_method_results.txt'")
     print("Plots have been saved as PNG files")
+    
+    # Bonus implementation
+    bonus_methods = bonus_implementation()
+    print("\nBonus N⁴ and N⁵ methods have been implemented")
 
 if __name__ == "__main__":
     main()
