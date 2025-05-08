@@ -9,8 +9,11 @@ def polynomial_value(coeffs, x):
     return result
 
 def polynomial_derivative(coeffs):
-    n = len(coeffs) - 1
-    return [i * coeffs[n-i] for i in range(1, n+1)] + [0]
+    n = len(coeffs) - 1  
+    if n == 0:  
+        return [0]
+    derivative_coeffs = [i * coeffs[n-i] for i in range(n, 0, -1)]
+    return derivative_coeffs
 
 def polynomial_second_derivative(coeffs):
     deriv = polynomial_derivative(coeffs)
@@ -20,7 +23,6 @@ def halley_method(coeffs, x0, epsilon=1e-6, k_max=1000):
     x = x0
     iterations = 0
     delta = None  
-
     while True:
         p_x = polynomial_value(coeffs, x)
         dp_x = polynomial_value(polynomial_derivative(coeffs), x)
@@ -64,13 +66,13 @@ def find_all_real_roots(coeffs, interval=(-10, 10), num_initial_points=20, epsil
     return sorted(found_roots)
 
 def compute_bounds_R(coeffs):
-    # a_n = coeffs[0]  # Leading coefficient
-    a_0 = coeffs[-1]  # Constant term
+    a_n = coeffs[0]  # Leading coefficient
+    # a_0 = coeffs[-1]  # Constant term
     
     # Find A = max{|ai| : i = 1..n}
     A = max(abs(coef) for coef in coeffs[1:-1]) if len(coeffs) > 2 else 0
     
-    R = (abs(a_0) + A) / abs(a_0)
+    R = (abs(a_n) + A) / abs(a_n)
     return R
 
 def save_roots_to_file(roots, filename="radacini.txt"):
