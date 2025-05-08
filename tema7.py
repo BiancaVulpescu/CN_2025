@@ -17,38 +17,30 @@ def polynomial_second_derivative(coeffs):
     return polynomial_derivative(deriv)
 
 def halley_method(coeffs, x0, epsilon=1e-6, k_max=1000):
-
     x = x0
     iterations = 0
-    delta = float('inf')  # Initialize delta
-    
-    # Continue while |Δ| ≥ ε AND k ≤ k_max AND |Δ| ≤ 10^8
-    while abs(delta) >= epsilon and iterations < k_max and abs(delta) <= 1e8:
-        # Calculate polynomial and its derivatives at x
+    delta = None  
+
+    while True:
         p_x = polynomial_value(coeffs, x)
         dp_x = polynomial_value(polynomial_derivative(coeffs), x)
         d2p_x = polynomial_value(polynomial_second_derivative(coeffs), x)
-        
-        # Calculate A = 2*(P'(x))^2 - P(x)*P''(x)
+
         A = 2 * dp_x**2 - p_x * d2p_x
-        
-        # Check for early stopping
+
         if abs(A) < epsilon:
-            return x, iterations, True
-            
-        # Calculate delta = 2*P(x)*P'(x)/A
+            return x, iterations, False
+
         delta = 2 * p_x * dp_x / A
-        
-        # Update x
         x = x - delta
         iterations += 1
-    
-    # Check if convergence was achieved
-    if abs(delta) < epsilon:
-        return x, iterations, True
-    else:
-        return x, iterations, False
 
+        if abs(delta) < epsilon:
+            return x, iterations, True
+
+        if abs(delta) > 1e8 or iterations >= k_max:
+            return x, iterations, False
+    
 def find_all_real_roots(coeffs, interval=(-10, 10), num_initial_points=20, epsilon=1e-6, k_max=1000):
 
     a, b = interval
