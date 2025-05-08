@@ -17,42 +17,30 @@ def polynomial_second_derivative(coeffs):
     return polynomial_derivative(deriv)
 
 def halley_method(coeffs, x0, epsilon=1e-6, k_max=1000):
-
     x = x0
     iterations = 0
-    
-    while iterations < k_max:
-        # Calculate polynomial and its derivatives at x
+    delta = None  
+
+    while True:
         p_x = polynomial_value(coeffs, x)
         dp_x = polynomial_value(polynomial_derivative(coeffs), x)
         d2p_x = polynomial_value(polynomial_second_derivative(coeffs), x)
-        
-        # Calculate A = 2*(P'(x))^2 - P(x)*P''(x)
-        A = 2 * dp_x**2 - p_x * d2p_x
-        
-        # Check for early stopping
-        if abs(A) < epsilon:
-            return x, iterations, True
-            
-        # Calculate delta = 2*P(x)*P'(x)/A
-        delta = 2 * p_x * dp_x / A
-        
-        # Update x
-        x_new = x - delta
-        
-        # Check for convergence
-        if abs(delta) < epsilon:
-            return x_new, iterations, True
-            
-        x = x_new
-        iterations += 1
-    
-    # If we've reached max iterations without converging
-    if abs(delta) < epsilon:
-        return x, iterations, True
-    else:
-        return x, iterations, False
 
+        A = 2 * dp_x**2 - p_x * d2p_x
+
+        if abs(A) < epsilon:
+            return x, iterations, False
+
+        delta = 2 * p_x * dp_x / A
+        x = x - delta
+        iterations += 1
+
+        if abs(delta) < epsilon:
+            return x, iterations, True
+
+        if abs(delta) > 1e8 or iterations >= k_max:
+            return x, iterations, False
+    
 def find_all_real_roots(coeffs, interval=(-10, 10), num_initial_points=20, epsilon=1e-6, k_max=1000):
 
     a, b = interval
@@ -62,7 +50,7 @@ def find_all_real_roots(coeffs, interval=(-10, 10), num_initial_points=20, epsil
     found_roots = []
     
     for x0 in initial_points:
-        root, iterations, converged = halley_method(coeffs, x0, epsilon, k_max)
+        root, iterations, converged = halley_method(coeffs, x0)
         
         if converged:
             # Check if this root is already found (within epsilon precision)
@@ -95,14 +83,13 @@ def save_roots_to_file(roots, filename="radacini.txt"):
 
 # Example usage
 if __name__ == "__main__":
-    # Example: P(x) = x^3 - 6x^2 + 11x - 6 = (x-1)(x-2)(x-3)
+    # Exemplu: P(x) = x^3 - 6x^2 + 11x - 6 = (x-1)(x-2)(x-3)
     coeffs = [1, -6, 11, -6]  # [a_n, a_{n-1}, ..., a_1, a_0]
     
-    # Compute bounds for real roots
     R = compute_bounds_R(coeffs)
-    print(f"All real roots are in the interval [-{R}, {R}]")
+    print(f"Toate radacinile reale se gasesc in intervalul: [-{R}, {R}]")
     
-    # Find all real roots in the interval [-R, R]
+    # Gasim radacinile reale din intervalul [-R, R]
     roots = find_all_real_roots(coeffs, interval=(-R, R), epsilon=1e-6, k_max=1000)
     print(f"Found {len(roots)} real roots: {roots}")
     save_roots_to_file(roots)
