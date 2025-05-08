@@ -46,14 +46,12 @@ def find_all_real_roots(coeffs, interval=(-10, 10), num_initial_points=20, epsil
     a, b = interval
     initial_points = np.linspace(a, b, num_initial_points)
     
-    # Store found roots and their convergence status
     found_roots = []
     
     for x0 in initial_points:
         root, iterations, converged = halley_method(coeffs, x0)
         
         if converged:
-            # Check if this root is already found (within epsilon precision)
             is_new_root = True
             for existing_root in found_roots:
                 if abs(root - existing_root) < epsilon:
@@ -81,7 +79,6 @@ def save_roots_to_file(roots, filename="radacini.txt"):
             f.write(f"{root:.10f}\n")  # scrie cu precizie mare
     print(f"Rădăcinile distincte au fost salvate în {filename}")
 
-# Example usage
 if __name__ == "__main__":
     # Exemplu: P(x) = x^3 - 6x^2 + 11x - 6 = (x-1)(x-2)(x-3)
     coeffs = [1, -6, 11, -6]  # [a_n, a_{n-1}, ..., a_1, a_0]
@@ -91,31 +88,30 @@ if __name__ == "__main__":
     
     # Gasim radacinile reale din intervalul [-R, R]
     roots = find_all_real_roots(coeffs, interval=(-R, R), epsilon=1e-6, k_max=1000)
-    print(f"Found {len(roots)} real roots: {roots}")
+    print(f"Am gasit {len(roots)} radacini reale: {roots}")
     save_roots_to_file(roots)
-    # Test the halley method on a specific initial point
+
     x0 = 1.5
     root, iterations, converged = halley_method(coeffs, x0)
     print(f"Starting from x0 = {x0}")
-    print(f"Approximated root: {root}")
-    print(f"Number of iterations: {iterations}")
-    print(f"Convergence: {converged}")
+    print(f"radacina aproximata este: {root}")
+    print(f"nr de iteratii: {iterations}")
+    print(f"convergenta?: {converged}")
     
-    # Plot the polynomial and its roots
-    x = np.linspace(-R, R, 1000)
-    p = np.polynomial.Polynomial(coeffs[::-1])  # Note: numpy uses reversed order
-    y = p(x)
+    # x = np.linspace(-R, R, 1000)
+    # p = np.polynomial.Polynomial(coeffs[::-1])  
+    # y = p(x)
     
-    plt.figure(figsize=(10, 6))
-    plt.plot(x, y)
-    plt.grid(True)
-    plt.axhline(y=0, color='r', linestyle='-', alpha=0.3)
-    plt.scatter(roots, [0]*len(roots), color='red', s=50)
-    plt.title(f"Polynomial P(x) and its real roots")
-    plt.xlabel('x')
-    plt.ylabel('P(x)')
-    plt.ylim(-10, 10)  # Adjust as needed
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(x, y)
+    # plt.grid(True)
+    # plt.axhline(y=0, color='r', linestyle='-', alpha=0.3)
+    # plt.scatter(roots, [0]*len(roots), color='red', s=50)
+    # plt.title(f"Polynomial P(x) and its real roots")
+    # plt.xlabel('x')
+    # plt.ylabel('P(x)')
+    # plt.ylim(-10, 10)  # Adjust as needed
     
-    # Show the plot
-    plt.tight_layout()
-    plt.show()
+    # # Show the plot
+    # plt.tight_layout()
+    # plt.show()
