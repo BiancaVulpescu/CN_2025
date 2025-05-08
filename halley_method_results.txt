@@ -1,0 +1,49 @@
+HALLEY'S METHOD RESULTS
+======================
+
+Example 1:
+Found 3 roots:
+  Root 1: x = 1.0000000000
+  Root 2: x = 2.0000000000
+  Root 3: x = 3.0000000000
+
+Example 2:
+Found 4 roots:
+  Root 1: x = -1.0000000000
+  Root 2: x = 0.1428571429
+  Root 3: x = 0.6666666667
+  Root 4: x = 1.5000000000
+
+Example 3:
+Found 4 roots:
+  Root 1: x = 0.2500000000
+  Root 2: x = 0.5000000000
+  Root 3: x = 1.0000000000
+  Root 4: x = 3.0000000000
+
+Example 4:
+Found 20 roots:
+  Root 1: x = 0.9999963668
+  Root 2: x = 0.9999964450
+  Root 3: x = 0.9999968306
+  Root 4: x = 0.9999970383
+  Root 5: x = 0.9999974923
+  Root 6: x = 0.9999976115
+  Root 7: x = 0.9999977871
+  Root 8: x = 0.9999980683
+  Root 9: x = 0.9999981195
+  Root 10: x = 0.9999985629
+  Root 11: x = 0.9999985631
+  Root 12: x = 2.0000014122
+  Root 13: x = 2.0000014225
+  Root 14: x = 2.0000014695
+  Root 15: x = 2.0000018634
+  Root 16: x = 2.0000021822
+  Root 17: x = 2.0000024531
+  Root 18: x = 2.0000031322
+  Root 19: x = 2.0000033689
+  Root 20: x = 2.0000035215
+
+Function example: f(x) = e^x - sin(x)
+Found root: x = -3.1830630119
+Converged in 5 iterations

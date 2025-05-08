@@ -1,3 +1,12 @@
+# Medeleanu Daria 
+# Vulpescu Bianca
+# 310910401RSL221137
+# 310910401RSL221219
+# medeleanudaria14@gmail.com
+# vulpescubianca@gmail.com
+# dariaa8868 
+# bianca2544
+#procent de rezolvare cu AI: 35% 
 import os
 import numpy as np
 import random
