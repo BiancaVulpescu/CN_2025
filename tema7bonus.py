@@ -74,28 +74,25 @@ def compute_bounds_R(coeffs):
     R = (abs(a_n) + A) / abs(a_n)
     return R
 
-def find_all_real_roots(coeffs, method, interval=None, num_points=500, epsilon=1e-6, k_max=1000):
-    if interval is None:
-        R = compute_bounds_R(coeffs)
-        interval = (-R, R)
-
+def find_all_real_roots(coeffs, method, interval=(-10, 10), num_initial_points=3000, epsilon=1e-6, k_max=1000):
     a, b = interval
-    points = np.linspace(a, b, num_points)
-    roots = []
-
-    for x0 in points:
+    initial_points = np.linspace(a, b, num_initial_points)
+    
+    found_roots = []
+    
+    for x0 in initial_points:
         root, _, converged = method(coeffs, x0, epsilon, k_max)
-        if converged and abs(polynomial_value(coeffs, root)) < epsilon:
-            rounded = round(root, 6)
-            if not any(round(r, 6) == rounded for r in roots):
-                roots.append(root)
-
-    return sorted(roots)
+        
+        if converged and abs(polynomial_value(coeffs, root)) < 1e-6:
+            if not any(abs(root - existing_root) < 1e-6 for existing_root in found_roots):
+                found_roots.append(root)
+    
+    return sorted(found_roots)
 
 def save_roots(roots, filename):
     with open(filename, "w") as f:
         for r in roots:
-            f.write(f"{r:.10f}\n")
+            f.write(f"{r:.12f}\n")
     print(f"Rădăcinile distincte au fost salvate în {filename}")
 
 if __name__ == "__main__":
@@ -104,11 +101,13 @@ if __name__ == "__main__":
     print(f"Toate rădăcinile reale se află în intervalul: [-{R}, {R}]")
 
     print("\n Metoda N4:")
-    roots_n4 = find_all_real_roots(coeffs, method_N4)
+    roots_n4 = find_all_real_roots(coeffs, method_N4, interval=(-R, R), num_initial_points=1000)
+
     print(f"Am găsit {len(roots_n4)} rădăcini reale: {roots_n4}")
     save_roots(roots_n4, "radacini_n4.txt")
 
     print("\n Metoda N5:")
-    roots_n5 = find_all_real_roots(coeffs, method_N5)
+    roots_n5 = find_all_real_roots(coeffs, method_N5, interval=(-R, R), num_initial_points=1000)
+
     print(f"Am găsit {len(roots_n5)} rădăcini reale: {roots_n5}")
     save_roots(roots_n5, "radacini_n5.txt")
