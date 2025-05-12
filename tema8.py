@@ -195,25 +195,3 @@ def run_tests():
 if __name__ == "__main__":
     results = run_tests()
     
-    # Compare results
-    print("\n\nResults Summary:")
-    for r in results:
-        print(f"\nFunction: {r['name']}")
-        
-        print("\nComparing number of iterations:")
-        print(f"Constant LR with analytical gradient: {r['constant_lr_analytical']['iterations']}")
-        print(f"Constant LR with approximate gradient: {r['constant_lr_approximate']['iterations']}")
-        print(f"Backtracking with analytical gradient: {r['backtracking_analytical']['iterations']}")
-        print(f"Backtracking with approximate gradient: {r['backtracking_approximate']['iterations']}")
-        
-        print("\nComparing function values at minima:")
-        print(f"Constant LR with analytical gradient: {r['constant_lr_analytical']['func_value']:.10f}")
-        print(f"Constant LR with approximate gradient: {r['constant_lr_approximate']['func_value']:.10f}")
-        print(f"Backtracking with analytical gradient: {r['backtracking_analytical']['func_value']:.10f}")
-        print(f"Backtracking with approximate gradient: {r['backtracking_approximate']['func_value']:.10f}")
-        
-        print("\nComparing minima found:")
-        print(f"Constant LR with analytical gradient: {r['constant_lr_analytical']['min_point']}")
-        print(f"Constant LR with approximate gradient: {r['constant_lr_approximate']['min_point']}")
-        print(f"Backtracking with analytical gradient: {r['backtracking_analytical']['min_point']}")
-        print(f"Backtracking with approximate gradient: {r['backtracking_approximate']['min_point']}")
