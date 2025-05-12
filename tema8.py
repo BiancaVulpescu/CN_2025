@@ -1,7 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
 
 def f1(x):
     """F(x1, x2) = x1^2 + x2^2 - 2x1 - 4x2 - 1"""
@@ -103,38 +100,6 @@ def gradient_descent_backtracking(f, grad_f, initial_x, beta=0.8, max_iter=10000
     
     return np.array(x_history), k
 
-# Function to create contour plot for the optimization path
-def plot_contour_and_path(f, x_history, title, x_min, x_max, y_min, y_max):
-    """Plot the contour of the function and the optimization path"""
-    plt.figure(figsize=(10, 8))
-    
-    # Create grid
-    x = np.linspace(x_min, x_max, 100)
-    y = np.linspace(y_min, y_max, 100)
-    X, Y = np.meshgrid(x, y)
-    Z = np.zeros_like(X)
-    
-    # Calculate function values
-    for i in range(X.shape[0]):
-        for j in range(X.shape[1]):
-            Z[i, j] = f(np.array([X[i, j], Y[i, j]]))
-    
-    # Create contour plot
-    plt.contour(X, Y, Z, 50, cmap='viridis')
-    plt.colorbar(label='Function Value')
-    
-    # Plot optimization path
-    plt.plot(x_history[:, 0], x_history[:, 1], 'r-o', alpha=0.6, label='Optimization Path')
-    plt.scatter(x_history[-1, 0], x_history[-1, 1], c='red', s=100, label='Final Point')
-    
-    plt.title(title)
-    plt.xlabel('x1')
-    plt.ylabel('x2')
-    plt.legend()
-    plt.grid(True)
-    
-    return plt
-
 # Testing the methods with different learning rates and functions
 def run_tests():
     results = []
@@ -142,20 +107,16 @@ def run_tests():
     # Function settings for testing
     function_settings = [
         {"f": f1, "grad_f": grad_f1, "approx_grad_f": lambda x: approximate_gradient(f1, x), 
-         "name": "f1(x1, x2) = x1^2 + x2^2 - 2x1 - 4x2 - 1", "x0": np.array([0.0, 0.0]), 
-         "plot_range": (-1, 3, -1, 5)},
+         "name": "f1(x1, x2) = x1^2 + x2^2 - 2x1 - 4x2 - 1", "x0": np.array([0.0, 0.0])},
         
         {"f": f2, "grad_f": grad_f2, "approx_grad_f": lambda x: approximate_gradient(f2, x), 
-         "name": "f2(x1, x2) = 3x1^2 - 12x1 + 2x2^2 + 16x2 - 10", "x0": np.array([0.0, 0.0]), 
-         "plot_range": (-1, 5, -10, 0)},
+         "name": "f2(x1, x2) = 3x1^2 - 12x1 + 2x2^2 + 16x2 - 10", "x0": np.array([0.0, 0.0])},
         
         {"f": f3, "grad_f": grad_f3, "approx_grad_f": lambda x: approximate_gradient(f3, x), 
-         "name": "f3(x1, x2) = x1^2 - 4x1x2 + 5x2^2 - 4x2 + 3", "x0": np.array([0.0, 0.0]), 
-         "plot_range": (-1, 5, -1, 2)},
+         "name": "f3(x1, x2) = x1^2 - 4x1x2 + 5x2^2 - 4x2 + 3", "x0": np.array([0.0, 0.0])},
         
         {"f": f4, "grad_f": grad_f4, "approx_grad_f": lambda x: approximate_gradient(f4, x), 
-         "name": "f4(x1, x2) = x1^2x2 - 2x1x2^2 + 3x1x2 + 4", "x0": np.array([1.0, 1.0]), 
-         "plot_range": (-2, 2, -2, 2)}
+         "name": "f4(x1, x2) = x1^2x2 - 2x1x2^2 + 3x1x2 + 4", "x0": np.array([1.0, 1.0])}
     ]
     
     for settings in function_settings:
@@ -164,7 +125,6 @@ def run_tests():
         approx_grad_f = settings["approx_grad_f"]
         name = settings["name"]
         x0 = settings["x0"]
-        plot_range = settings["plot_range"]
         
         print(f"\nTesting {name}")
         print("Initial point:", x0)
@@ -227,24 +187,9 @@ def run_tests():
                 "iterations": iters_bt_approx,
                 "func_value": f(x_history_bt_approx[-1]),
                 "path": x_history_bt_approx
-            },
-            "plot_range": plot_range
+            }
         })
         
-        # Plot paths
-        x_min, x_max, y_min, y_max = plot_range
-        plot_contour_and_path(
-            f, x_history_const_lr, 
-            f"{name}\nConstant LR with Analytical Gradient ({iters_const_lr} iterations)",
-            x_min, x_max, y_min, y_max
-        ).savefig(f"function_{len(results)}_const_lr_analytical.png")
-        
-        plot_contour_and_path(
-            f, x_history_bt, 
-            f"{name}\nBacktracking with Analytical Gradient ({iters_bt} iterations)",
-            x_min, x_max, y_min, y_max
-        ).savefig(f"function_{len(results)}_backtracking_analytical.png")
-    
     return results
 
 if __name__ == "__main__":
