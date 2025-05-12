@@ -75,13 +75,13 @@ def compute_bounds_R(coeffs):
     R = (abs(a_n) + A) / abs(a_n)
     return R
 
-def save_roots_to_file(roots, filename="radacini.txt"):
+def save_roots_to_file(roots, filename='radacini.txt'):
     with open(filename, "w") as f:
         for root in roots:
             f.write(f"{root:.10f}\n")  # scrie cu precizie mare
     print(f"Rădăcinile distincte au fost salvate în {filename}")
 
-# if __name__ == "__main__":
+# def main():
 #     # Exemplu: P(x) = x^3 - 6x^2 + 11x - 6 = (x-1)(x-2)(x-3)
 #     coeffs = [1, -6, 11, -6]  # [a_n, a_{n-1}, ..., a_1, a_0]
     
@@ -136,23 +136,23 @@ def main():
         print(f"convergenta?: {converged}")
 
         
-        # x = np.linspace(-R, R, 1000)
-        # p = np.polynomial.Polynomial(coeffs[::-1])  
-        # y = p(x)
+#         # x = np.linspace(-R, R, 1000)
+#         # p = np.polynomial.Polynomial(coeffs[::-1])  
+#         # y = p(x)
         
-        # plt.figure(figsize=(10, 6))
-        # plt.plot(x, y)
-        # plt.grid(True)
-        # plt.axhline(y=0, color='r', linestyle='-', alpha=0.3)
-        # plt.scatter(roots, [0]*len(roots), color='red', s=50)
-        # plt.title(f"Polynomial P(x) and its real roots")
-        # plt.xlabel('x')
-        # plt.ylabel('P(x)')
-        # plt.ylim(-10, 10)  # Adjust as needed
+#         # plt.figure(figsize=(10, 6))
+#         # plt.plot(x, y)
+#         # plt.grid(True)
+#         # plt.axhline(y=0, color='r', linestyle='-', alpha=0.3)
+#         # plt.scatter(roots, [0]*len(roots), color='red', s=50)
+#         # plt.title(f"Polynomial P(x) and its real roots")
+#         # plt.xlabel('x')
+#         # plt.ylabel('P(x)')
+#         # plt.ylim(-10, 10)  # Adjust as needed
         
-        # # Show the plot
-        # plt.tight_layout()
-        # plt.show()
+#         # # Show the plot
+#         # plt.tight_layout()
+#         # plt.show()
 
 if __name__ == "__main__":
     main()
