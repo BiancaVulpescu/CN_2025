@@ -57,9 +57,9 @@ def compute_bounds_R(coeffs):
     R = (abs(a0) + max_coef )/ abs(a0)
     return R
 
-def find_all_real_roots(coeffs, epsilon=1e-10, k_max=1000, num_starting_points=20):
+def find_all_real_roots(coeffs, epsilon=1e-10, k_max=1000, num_starting_points=50):
     R = compute_bounds_R(coeffs)
-    print(f"Searching for roots in interval [-{R:.6f}, {R:.6f}]")
+    print(f"Gasim radacinile in radacini: [-{R:.6f}, {R:.6f}]")
     
     starting_points = np.linspace(-R, R, num_starting_points)
     
@@ -74,7 +74,7 @@ def find_all_real_roots(coeffs, epsilon=1e-10, k_max=1000, num_starting_points=2
             all_roots.append(root)
             all_starting_points.append(x0)
             all_iterations.append(iterations)
-            print(f"Found root {root:.10f} starting from x0 = {x0:.6f} after {iterations} iterations")
+            print(f"Au fost gasite {root:.10f} radacini in total, incepand cu x0 = {x0:.6f} dupa {iterations} iteratii")
     
     distinct_roots = []
     distinct_starting_points = []
@@ -92,7 +92,7 @@ def find_all_real_roots(coeffs, epsilon=1e-10, k_max=1000, num_starting_points=2
             distinct_starting_points.append(all_starting_points[i])
             distinct_iterations.append(all_iterations[i])
     
-    print(f"\nFound {len(all_roots)} roots in total, {len(distinct_roots)} of which are distinct")
+    print(f"\nAu fost gasite {len(all_roots)} radacini in total, {len(distinct_roots)} care sunt distincte")
     
     return distinct_roots, distinct_starting_points, distinct_iterations
 
