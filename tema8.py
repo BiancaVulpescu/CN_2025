@@ -30,7 +30,6 @@ def grad_f4(x):
                     x[0]**2 - 4*x[0]*x[1] + 3*x[0]])
 
 def approximate_gradient(f, x, h=1e-6):
-    """Approximate gradient using finite differences"""
     n = len(x)
     grad = np.zeros(n)
     
@@ -45,12 +44,10 @@ def approximate_gradient(f, x, h=1e-6):
         x3[i] -= h
         x4[i] -= 2*h
         
-        # Central difference formula (higher accuracy)
         grad[i] = (-f(x1) + 8*f(x2) - 8*f(x3) + f(x4)) / (12*h)
         
     return grad
 
-# Gradient descent with constant learning rate
 def gradient_descent_constant_lr(f, grad_f, initial_x, lr=0.01, max_iter=10000, epsilon=1e-5):
     x = initial_x.copy()
     x_history = [x.copy()]
@@ -69,20 +66,16 @@ def gradient_descent_constant_lr(f, grad_f, initial_x, lr=0.01, max_iter=10000, 
     
     return np.array(x_history), k
 
-# Gradient descent with backtracking line search
 def gradient_descent_backtracking(f, grad_f, initial_x, beta=0.8, max_iter=10000, epsilon=1e-5):
-    """Gradient descent with backtracking line search"""
     x = initial_x.copy()
     x_history = [x.copy()]
     
     for k in range(max_iter):
         gradient = grad_f(x)
         
-        # Check termination criteria
         if np.linalg.norm(gradient) < epsilon:
             break
         
-        # Backtracking line search
         eta = 1.0
         p = 1
         
@@ -90,21 +83,17 @@ def gradient_descent_backtracking(f, grad_f, initial_x, beta=0.8, max_iter=10000
             eta = eta * beta
             p += 1
         
-        # Update x
         x = x - eta * gradient
         x_history.append(x.copy())
         
-        # Check convergence
         if k > 0 and np.linalg.norm(x_history[-1] - x_history[-2]) < epsilon:
             break
     
     return np.array(x_history), k
 
-# Testing the methods with different learning rates and functions
 def run_tests():
     results = []
     
-    # Function settings for testing
     function_settings = [
         {"f": f1, "grad_f": grad_f1, "approx_grad_f": lambda x: approximate_gradient(f1, x), 
          "name": "f1(x1, x2) = x1^2 + x2^2 - 2x1 - 4x2 - 1", "x0": np.array([0.0, 0.0])},
@@ -129,7 +118,6 @@ def run_tests():
         print(f"\nTesting {name}")
         print("Initial point:", x0)
         
-        # Gradient descent with constant learning rate - using analytical gradient
         x_history_const_lr, iters_const_lr = gradient_descent_constant_lr(
             f, grad_f, x0, lr=0.1, max_iter=1000, epsilon=1e-5
         )
@@ -137,7 +125,6 @@ def run_tests():
         print(f"Minimum found at {x_history_const_lr[-1]} after {iters_const_lr} iterations")
         print(f"Function value: {f(x_history_const_lr[-1])}")
         
-        # Gradient descent with constant learning rate - using approximate gradient
         x_history_const_lr_approx, iters_const_lr_approx = gradient_descent_constant_lr(
             f, approx_grad_f, x0, lr=0.1, max_iter=1000, epsilon=1e-5
         )
@@ -145,7 +132,6 @@ def run_tests():
         print(f"Minimum found at {x_history_const_lr_approx[-1]} after {iters_const_lr_approx} iterations")
         print(f"Function value: {f(x_history_const_lr_approx[-1])}")
         
-        # Gradient descent with backtracking - using analytical gradient
         x_history_bt, iters_bt = gradient_descent_backtracking(
             f, grad_f, x0, beta=0.8, max_iter=1000, epsilon=1e-5
         )
@@ -153,7 +139,6 @@ def run_tests():
         print(f"Minimum found at {x_history_bt[-1]} after {iters_bt} iterations")
         print(f"Function value: {f(x_history_bt[-1])}")
         
-        # Gradient descent with backtracking - using approximate gradient
         x_history_bt_approx, iters_bt_approx = gradient_descent_backtracking(
             f, approx_grad_f, x0, beta=0.8, max_iter=1000, epsilon=1e-5
         )
@@ -161,7 +146,6 @@ def run_tests():
         print(f"Minimum found at {x_history_bt_approx[-1]} after {iters_bt_approx} iterations")
         print(f"Function value: {f(x_history_bt_approx[-1])}")
         
-        # Store results
         results.append({
             "name": name,
             "constant_lr_analytical": {
