@@ -97,11 +97,6 @@ def find_all_real_roots(coeffs, epsilon=1e-10, k_max=1000, num_starting_points=2
     return distinct_roots, distinct_starting_points, distinct_iterations
 
 def save_roots_to_file(roots, filename='radacini.txt'):
-    """
-    Save distinct roots to a file.
-    
-    Each root is written on a separate line with high precision.
-    """
     with open(filename, "w") as f:
         for root in roots:
             f.write(f"{root:.10f}\n")
