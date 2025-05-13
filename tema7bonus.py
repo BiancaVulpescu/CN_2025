@@ -20,12 +20,6 @@ def polynomial_second_derivative(coeffs):
     return polynomial_derivative(polynomial_derivative(coeffs))
 
 def method_N4(coeffs, x0, epsilon=1e-10, k_max=1000):
-    """
-    N4 method for finding polynomial roots.
-    Following equation (5) from the article:
-    x_{n+1} = x_n - (f(x_n)^2 + f(y_n)^2) / (f'(x_n)(f(x_n) - f(y_n)))
-    where y_n = x_n - f(x_n)/f'(x_n) is the Newton step.
-    """
     x = x0
     iterations = 0
     
@@ -40,16 +34,13 @@ def method_N4(coeffs, x0, epsilon=1e-10, k_max=1000):
         if abs(dfx) < epsilon:
             return x, iterations, False
         
-        # Newton step (eq. 4)
         y = x - fx / dfx
         fy = polynomial_value(coeffs, y)
         
-        # Avoid division by zero
         denominator = dfx * (fx - fy)
         if abs(denominator) < epsilon:
             return x, iterations, False
         
-        # N4 correction (eq. 5)
         x_new = x - (fx**2 + fy**2) / denominator
         
         if abs(x_new - x) < epsilon:
@@ -61,13 +52,6 @@ def method_N4(coeffs, x0, epsilon=1e-10, k_max=1000):
     return x, iterations, False
 
 def method_N5(coeffs, x0, epsilon=1e-10, k_max=1000):
-    """
-    N5 method for finding polynomial roots.
-    Following equations (10) and (11) from the article:
-    z_n = x_n - (f(x_n)^2 + f(y_n)^2) / (f'(x_n)(f(x_n) - f(y_n)))
-    x_{n+1} = z_n - f(z_n)/f'(x_n)
-    where y_n = x_n - f(x_n)/f'(x_n) is the Newton step.
-    """
     x = x0
     iterations = 0
     
@@ -82,23 +66,19 @@ def method_N5(coeffs, x0, epsilon=1e-10, k_max=1000):
         if abs(dfx) < epsilon:
             return x, iterations, False
         
-        # Newton step (eq. 4)
         y = x - fx / dfx
         fy = polynomial_value(coeffs, y)
         
-        # Avoid division by zero
         denominator = dfx * (fx - fy)
         if abs(denominator) < epsilon:
             return x, iterations, False
         
-        # N5 first step (eq. 10) - same as N4
         z = x - (fx**2 + fy**2) / denominator
         fz = polynomial_value(coeffs, z)
         
         if abs(fz) < epsilon:
             return z, iterations, True
         
-        # N5 second step (eq. 11)
         x_new = z - fz / dfx
         
         if abs(x_new - x) < epsilon:
@@ -110,24 +90,19 @@ def method_N5(coeffs, x0, epsilon=1e-10, k_max=1000):
     return x, iterations, False
 
 def compute_bounds_R(coeffs):
-    """
-    Compute a bound R such that all real roots lie in [-R, R].
-    """
-    an = coeffs[0]  # Leading coefficient
+    a0 = coeffs[0]  
     
     other_coeffs = [abs(coef) for coef in coeffs[1:]]
     if not other_coeffs:
-        return 1  # Special case for constant polynomial
+        return 1  
         
     max_coef = max(other_coeffs)
     
-    R = 1 + (max_coef / abs(an))
+    R = (abs(a0) + max_coef )/ abs(a0)
     return R
 
 def find_all_real_roots(coeffs, method, epsilon=1e-10, k_max=1000, num_starting_points=50):
-    """
-    Find all real roots of a polynomial using the given method.
-    """
+    
     R = compute_bounds_R(coeffs)
     print(f"Searching for roots in interval [-{R:.6f}, {R:.6f}]")
     
@@ -172,9 +147,6 @@ def find_all_real_roots(coeffs, method, epsilon=1e-10, k_max=1000, num_starting_
     return distinct_roots, distinct_starting_points, distinct_iterations
 
 def save_roots_to_file(roots, filename):
-    """
-    Save the computed roots to a file.
-    """
     with open(filename, "w") as f:
         for root in roots:
             f.write(f"{root:.10f}\n")
@@ -202,7 +174,6 @@ def main():
         print(f"Testare polinom {i}: {poly['name']}")
         print(f"{'='*50}")
         
-        # Test N4 Method
         print(f"\nUsing Method N4:")
         roots_n4, starting_points_n4, iterations_n4 = find_all_real_roots(
             poly['coeffs'], 
@@ -218,7 +189,6 @@ def main():
         
         save_roots_to_file(roots_n4, filename=f"radacini_n4_poly_{i}.txt")
         
-        # Test N5 Method
         print(f"\nUsing Method N5:")
         roots_n5, starting_points_n5, iterations_n5 = find_all_real_roots(
             poly['coeffs'], 
