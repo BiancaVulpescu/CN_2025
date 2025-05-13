@@ -185,34 +185,29 @@ def main():
          "coeffs": [1, -6, 13, -12, 4]}
     ]
     
-    # Process each polynomial
     for i, poly in enumerate(test_polynomials, 1):
         print(f"\n\n{'='*50}")
         print(f"Testare polinom {i}: {poly['name']}")
         print(f"{'='*50}")
         
-        # Find all real roots
         roots, starting_points, iterations = find_all_real_roots(
             poly['coeffs'], 
             epsilon=epsilon, 
             k_max=k_max, 
-            num_starting_points=50  # Use more starting points for better coverage
+            num_starting_points=50  
         )
         
-        # Display results
         print(f"\nRădăcini distincte găsite: {len(roots)}")
         for j, root in enumerate(roots):
             print(f"Rădăcina {j+1}: {root:.10f} (găsită pornind de la x0 = {starting_points[j]:.6f} în {iterations[j]} iterații)")
         
-        # Save roots to file
         save_roots_to_file(roots, filename=f"radacini_poly_{i}.txt")
         
-        # Example of finding a specific root from a given starting point
-        if i == 1:  # Only for the first polynomial as an example
-            specific_x0 = 1.5
-            print(f"\nTestat metoda lui Halley cu punctul de start specific x0 = {specific_x0}")
-            root, iterations, converged = halley_method(poly['coeffs'], specific_x0, epsilon, k_max)
-            print(f"Rădăcină: {root:.10f}, Iterații: {iterations}, Convergență: {converged}")
+        # if i == 1:  # testez doar pt primul polinom
+        #     specific_x0 = 1.5
+        #     print(f"\nTestat metoda lui Halley cu punctul de start specific x0 = {specific_x0}")
+        #     root, iterations, converged = halley_method(poly['coeffs'], specific_x0, epsilon, k_max)
+        #     print(f"Rădăcină: {root:.10f}, Iterații: {iterations}, Convergență: {converged}")
 
 if __name__ == "__main__":
     main()
