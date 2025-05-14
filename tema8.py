@@ -48,7 +48,7 @@ def approximate_gradient(f, x, h=1e-6):
         
     return grad
 
-def gradient_descent_constant_lr(f, grad_f, initial_x, lr=0.01, max_iter=10000, epsilon=1e-5):
+def gradient_descent_constant_lr(f, grad_f, initial_x, lr=0.01, max_iter=30000, epsilon=1e-5):
     x = initial_x.copy()
     x_history = [x.copy()]
     
@@ -66,7 +66,7 @@ def gradient_descent_constant_lr(f, grad_f, initial_x, lr=0.01, max_iter=10000, 
     
     return np.array(x_history), k
 
-def gradient_descent_backtracking(f, grad_f, initial_x, beta=0.8, max_iter=10000, epsilon=1e-5):
+def gradient_descent_backtracking(f, grad_f, initial_x, beta=0.8, max_iter=30000, epsilon=1e-5):
     x = initial_x.copy()
     x_history = [x.copy()]
     
@@ -96,13 +96,13 @@ def run_tests():
     
     function_settings = [
         {"f": f1, "grad_f": grad_f1, "approx_grad_f": lambda x: approximate_gradient(f1, x), 
-         "name": "f1(x1, x2) = x1^2 + x2^2 - 2x1 - 4x2 - 1", "x0": np.array([0.0, 0.0])},
+         "name": "f1(x1, x2) = x1^2 + x2^2 - 2x1 - 4x2 - 1", "x0": np.array([1.0, 1.0])},
         
         {"f": f2, "grad_f": grad_f2, "approx_grad_f": lambda x: approximate_gradient(f2, x), 
-         "name": "f2(x1, x2) = 3x1^2 - 12x1 + 2x2^2 + 16x2 - 10", "x0": np.array([0.0, 0.0])},
+         "name": "f2(x1, x2) = 3x1^2 - 12x1 + 2x2^2 + 16x2 - 10", "x0": np.array([1.0, 1.0])},
         
         {"f": f3, "grad_f": grad_f3, "approx_grad_f": lambda x: approximate_gradient(f3, x), 
-         "name": "f3(x1, x2) = x1^2 - 4x1x2 + 5x2^2 - 4x2 + 3", "x0": np.array([0.0, 0.0])},
+         "name": "f3(x1, x2) = x1^2 - 4x1x2 + 5x2^2 - 4x2 + 3", "x0": np.array([1.0, 1.0])},
         
         {"f": f4, "grad_f": grad_f4, "approx_grad_f": lambda x: approximate_gradient(f4, x), 
          "name": "f4(x1, x2) = x1^2x2 - 2x1x2^2 + 3x1x2 + 4", "x0": np.array([1.0, 1.0])}
@@ -119,28 +119,28 @@ def run_tests():
         print("Initial point:", x0)
         
         x_history_const_lr, iters_const_lr = gradient_descent_constant_lr(
-            f, grad_f, x0, lr=0.1, max_iter=1000, epsilon=1e-5
+            f, grad_f, x0, lr=0.1, max_iter=30000, epsilon=1e-5
         )
         print("\nConstant LR with analytical gradient:")
         print(f"Minimum found at {x_history_const_lr[-1]} after {iters_const_lr} iterations")
         print(f"Function value: {f(x_history_const_lr[-1])}")
         
         x_history_const_lr_approx, iters_const_lr_approx = gradient_descent_constant_lr(
-            f, approx_grad_f, x0, lr=0.1, max_iter=1000, epsilon=1e-5
+            f, approx_grad_f, x0, lr=0.1, max_iter=30000, epsilon=1e-5
         )
         print("\nConstant LR with approximate gradient:")
         print(f"Minimum found at {x_history_const_lr_approx[-1]} after {iters_const_lr_approx} iterations")
         print(f"Function value: {f(x_history_const_lr_approx[-1])}")
         
         x_history_bt, iters_bt = gradient_descent_backtracking(
-            f, grad_f, x0, beta=0.8, max_iter=1000, epsilon=1e-5
+            f, grad_f, x0, beta=0.8, max_iter=30000, epsilon=1e-5
         )
         print("\nBacktracking with analytical gradient:")
         print(f"Minimum found at {x_history_bt[-1]} after {iters_bt} iterations")
         print(f"Function value: {f(x_history_bt[-1])}")
         
         x_history_bt_approx, iters_bt_approx = gradient_descent_backtracking(
-            f, approx_grad_f, x0, beta=0.8, max_iter=1000, epsilon=1e-5
+            f, approx_grad_f, x0, beta=0.8, max_iter=30000, epsilon=1e-5
         )
         print("\nBacktracking with approximate gradient:")
         print(f"Minimum found at {x_history_bt_approx[-1]} after {iters_bt_approx} iterations")

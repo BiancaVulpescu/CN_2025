@@ -151,7 +151,7 @@ def save_roots_to_file(roots, filename):
         for root in roots:
             f.write(f"{root:.10f}\n")
     
-    print(f"Cele {len(roots)} rădăcini distincte au fost salvate în {filename}")
+    print(f"Cele {len(roots)} radacini distincte au fost salvate in {filename}")
 
 def main():
     p = 10  
@@ -183,9 +183,9 @@ def main():
             num_starting_points=50  
         )
         
-        print(f"\nRădăcini distincte găsite cu N4: {len(roots_n4)}")
+        print(f"\nRadacini distincte gasite cu N4: {len(roots_n4)}")
         for j, root in enumerate(roots_n4):
-            print(f"Rădăcina {j+1}: {root:.10f} (găsită pornind de la x0 = {starting_points_n4[j]:.6f} în {iterations_n4[j]} iterații)")
+            print(f"Radacina {j+1}: {root:.10f} (gasita pornind de la x0 = {starting_points_n4[j]:.6f} in {iterations_n4[j]} iteratii)")
         
         save_roots_to_file(roots_n4, filename=f"radacini_n4_poly_{i}.txt")
         
@@ -198,9 +198,9 @@ def main():
             num_starting_points=50  
         )
         
-        print(f"\nRădăcini distincte găsite cu N5: {len(roots_n5)}")
+        print(f"\nRadacini distincte gasite cu N5: {len(roots_n5)}")
         for j, root in enumerate(roots_n5):
-            print(f"Rădăcina {j+1}: {root:.10f} (găsită pornind de la x0 = {starting_points_n5[j]:.6f} în {iterations_n5[j]} iterații)")
+            print(f"Radacina {j+1}: {root:.10f} (gasita pornind de la x0 = {starting_points_n5[j]:.6f} in {iterations_n5[j]} iteratii)")
         
         save_roots_to_file(roots_n5, filename=f"radacini_n5_poly_{i}.txt")
 
