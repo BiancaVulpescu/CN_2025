@@ -1,23 +1,42 @@
-import logo from './logo.svg';
 import './App.css';
+import React, { useState } from 'react';
+import Tema1 from './teme/Tema1';
+import Tema2 from './teme/Tema2';
+import Tema3 from './teme/Tema3';
+import Tema4 from './teme/Tema4';
 
+const teme = [
+  { title: "Tema 1", component: <Tema1 /> },
+  { title: "Tema 2", component: <Tema2 /> },
+  { title: "Tema 3", component: <Tema3 /> },
+  { title: "Tema 4", component: <Tema4 /> },
+];
 function App() {
+    const [openTema, setOpenTema] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="html">
+      <div className="body">
+        <p class="line-1 anim-typewriter">Teme Calcul Numeric 2025</p>
+        <p class="line-2">Medeleanu Daria Vulpescu Bianca A2</p>
+        <div className="teme-container">
+          {teme.map((tema, idx) => (
+            <div key={idx} className="tema-dropdown">
+              <button
+                className="tema-btn"
+                onClick={() => setOpenTema(openTema === idx ? null : idx)}
+              >
+                {tema.title}
+              </button>
+              {openTema === idx && (
+                <div className="exercise-content" style={{ marginTop: '1em' }}>
+                  {tema.component}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
