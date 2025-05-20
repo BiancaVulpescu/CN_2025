@@ -8,7 +8,8 @@ from tema1 import run_all
 from tema2 import example_custom_diagonals
 from tema3 import tema3
 from tema4 import main
-
+from tema5 import main as main5
+from tema6 import main as main6
 app = Flask(__name__)
 CORS(app)
 
@@ -59,6 +60,28 @@ def get_tema4_output():
     sys.stdout = buffer 
 
     main()
+
+    sys.stdout = sys.__stdout__
+    output = buffer.getvalue()
+    return jsonify({"output": output})
+
+@app.route('/tema5-output', methods=['POST'])
+def get_tema5_output():
+    buffer = io.StringIO()
+    sys.stdout = buffer
+
+    main5()
+
+    sys.stdout = sys.__stdout__
+    output = buffer.getvalue()
+    return jsonify({"output": output})
+
+@app.route('/tema6-output', methods=['POST'])
+def get_tema6_output():
+    buffer = io.StringIO()
+    sys.stdout = buffer
+
+    main6()
 
     sys.stdout = sys.__stdout__
     output = buffer.getvalue()

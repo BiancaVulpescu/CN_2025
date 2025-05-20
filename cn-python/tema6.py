@@ -159,7 +159,7 @@ def trigonometric_interpolation(x_points, y_points, x_eval, true_func=None):
     
     plot_trig_approximation(x_points, y_points, a0, a_coefs, b_coefs, m, true_func)
     
-    return (a0, a_coefs, b_coefs), t_eval, errors_sum
+    return (a0, a_coefs, b_coefs), t_eval
 
 def plot_trig_approximation(x_points, y_points, a0, a_coefs, b_coefs, m, true_func=None):
     plt.figure(figsize=(10, 6))
@@ -189,53 +189,56 @@ def plot_trig_approximation(x_points, y_points, a0, a_coefs, b_coefs, m, true_fu
     plt.grid(True)
     plt.show()
 
+def main():
+    # Example 1: f(x) = x⁴ - 12x³ + 30x² + 12 on [1, 5]
+    def f1(x):
+        return x**4 - 12*x**3 + 30*x**2 + 12
+    x0, xn = 1, 5
+    n = 10  
+    x_points = np.linspace(x0, xn, n+1)
+    y_points = [f1(x) for x in x_points]
 
-# Example 1: f(x) = x⁴ - 12x³ + 30x² + 12 on [1, 5]
-def f1(x):
-    return x**4 - 12*x**3 + 30*x**2 + 12
-x0, xn = 1, 5
-n = 10  
-x_points = np.linspace(x0, xn, n+1)
-y_points = [f1(x) for x in x_points]
+    x_eval = 3.0
 
-x_eval = 3.0
+    print("f(x) = x⁴ - 12x³ + 30x² + 12")
+    print("="*50)
+    for m in [2, 3, 4, 5]:
+        coeffs, p_eval, errors_sum = polynomial_approximation(x_points, y_points, x_eval, m, f1)
+        print("="*50)
 
-print("f(x) = x⁴ - 12x³ + 30x² + 12")
-print("="*50)
-for m in [2, 3, 4, 5]:
-    coeffs, p_eval, errors_sum = polynomial_approximation(x_points, y_points, x_eval, m, f1)
+    # Example 2a: f(x) = sin(x) - cos(x) on [0, 2π]
+    def f2a(x):
+        return np.sin(x) - np.cos(x)
+
+    # Example 2b: f(x) = sin(2x) + sin(x) + cos(3x) on [0, 2π]
+    def f2b(x):
+        return np.sin(2*x) + np.sin(x) + np.cos(3*x)
+
+    # Example 2c: f(x) = sin²(x) - cos²(x) on [0, 2π]
+    def f2c(x):
+        return np.sin(x)**2 - np.cos(x)**2
+
+    m_trig = 3  
+    x_points_trig = np.linspace(0, 2*np.pi, 2*m_trig+1, endpoint=False)  # n = 2m points
+
+    print("\nExample 2a: f(x) = sin(x) - cos(x)")
+    print("="*50)
+    y_points_trig = [f2a(x) for x in x_points_trig]
+    x_eval_trig = np.pi/4
+    trigonometric_interpolation(x_points_trig, y_points_trig, x_eval_trig, f2a)
     print("="*50)
 
-# Example 2a: f(x) = sin(x) - cos(x) on [0, 2π]
-def f2a(x):
-    return np.sin(x) - np.cos(x)
+    print("\nExample 2b: f(x) = sin(2x) + sin(x) + cos(3x)")
+    print("="*50)
+    y_points_trig = [f2b(x) for x in x_points_trig]
+    trigonometric_interpolation(x_points_trig, y_points_trig, x_eval_trig, f2b)
+    print("="*50)
 
-# Example 2b: f(x) = sin(2x) + sin(x) + cos(3x) on [0, 2π]
-def f2b(x):
-    return np.sin(2*x) + np.sin(x) + np.cos(3*x)
-
-# Example 2c: f(x) = sin²(x) - cos²(x) on [0, 2π]
-def f2c(x):
-    return np.sin(x)**2 - np.cos(x)**2
-
-m_trig = 3  
-x_points_trig = np.linspace(0, 2*np.pi, 2*m_trig+1, endpoint=False)  # n = 2m points
-
-print("\nExample 2a: f(x) = sin(x) - cos(x)")
-print("="*50)
-y_points_trig = [f2a(x) for x in x_points_trig]
-x_eval_trig = np.pi/4
-trigonometric_interpolation(x_points_trig, y_points_trig, x_eval_trig, f2a)
-print("="*50)
-
-print("\nExample 2b: f(x) = sin(2x) + sin(x) + cos(3x)")
-print("="*50)
-y_points_trig = [f2b(x) for x in x_points_trig]
-trigonometric_interpolation(x_points_trig, y_points_trig, x_eval_trig, f2b)
-print("="*50)
-
-print("\nExample 2c: f(x) = sin²(x) - cos²(x)")
-print("="*50)
-y_points_trig = [f2c(x) for x in x_points_trig]
-trigonometric_interpolation(x_points_trig, y_points_trig, x_eval_trig, f2c)
-print("="*50)
+    print("\nExample 2c: f(x) = sin²(x) - cos²(x)")
+    print("="*50)
+    y_points_trig = [f2c(x) for x in x_points_trig]
+    trigonometric_interpolation(x_points_trig, y_points_trig, x_eval_trig, f2c)
+    print("="*50)
+    
+if __name__ == "__main__":
+    main()

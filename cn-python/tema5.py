@@ -165,6 +165,7 @@ def main():
     
     # Cazul 1: p = n > 500 - matrice patratica, rara si simetrica
     n = 600
+    print("\n=== Analiza pentru matrice rara simetrica creata de noi:")
     _, d, rare = genereaza_matrice_rara_simetrica(n, densitate=0.01)
     analizeaza_matrice( n, d, rare)
     
@@ -172,6 +173,7 @@ def main():
     file_names = [f for f in os.listdir("tema5files") if os.path.isfile(os.path.join("tema5files", f))]
     for f in file_names:
         nume_fisier = f"tema5files/{f}"
+        print(f"\n=== Analiza pentru fișierul: {nume_fisier} ===")
         n, d, rare = citire_matrice_met1(nume_fisier)
         analizeaza_matrice( n, d, rare)
 
