@@ -135,7 +135,7 @@ def main():
         for j, root in enumerate(roots):
             print(f"Radacina {j+1}: {root:.10f} (gasita pornind de la x0 = {starting_points[j]:.6f} in {iterations[j]} iteratii)")
         
-        save_roots_to_file(roots, filename=f"radacini_poly_{i}.txt")
+       # save_roots_to_file(roots, filename=f"radacini_poly_{i}.txt")
         
         # if i == 1:  # testez doar pt primul polinom
         #     specific_x0 = 1.5
