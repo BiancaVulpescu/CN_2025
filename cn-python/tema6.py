@@ -1,3 +1,15 @@
+# Medeleanu Daria 
+# Vulpescu Bianca
+# 310910401RSL221137
+# 310910401RSL221219
+# medeleanudaria14@gmail.com
+# vulpescubianca@gmail.com
+# dariaa8868 
+# bianca2544
+#procent de rezolvare cu AI: 35% 
+#resurse
+#https://www.geeksforgeeks.org/horners-method-polynomial-evaluation/
+#https://edu.info.uaic.ro/calcul-numeric/CN/lab/6/Tema%206.pdf
 import numpy as np
 import matplotlib.pyplot as plt
 

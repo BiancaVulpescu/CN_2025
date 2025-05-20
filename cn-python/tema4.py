@@ -88,7 +88,7 @@ def genereaza_inversa_exacta_dupa_form_dedusa(n):
     return A
 
 
-if __name__ == "__main__":
+def main():
     print("\n=== Punctul 1&2 ===")
     
     # A = np.array([[-24, 18, 5], [20, -15, -4], [-5, 4, 1]])
@@ -130,3 +130,6 @@ if __name__ == "__main__":
 
                 print("Eroare fata de inversa exacta:")
                 print(np.linalg.norm(inv_exact - inv_aprox))
+
+if __name__ == "__main__":
+    main()

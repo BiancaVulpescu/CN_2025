@@ -1,3 +1,15 @@
+# Medeleanu Daria 
+# Vulpescu Bianca
+# 310910401RSL221137
+# 310910401RSL221219
+# medeleanudaria14@gmail.com
+# vulpescubianca@gmail.com
+# dariaa8868 
+# bianca2544
+#procent de rezolvare cu AI: 45% 
+#resurse:
+#https://edu.info.uaic.ro/calcul-numeric/CN/lab/8/Tema%208.pdf
+#https://edu.info.uaic.ro/calcul-numeric/CN/lab/8/ML.ex-book.SLIDES.Regression.pdf
 import numpy as np
 
 def f1(x):

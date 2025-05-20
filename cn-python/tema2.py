@@ -98,26 +98,29 @@ def compute_determinant(A, dU):
         detA *= i
     return detA
 
-def example_custom_diagonals():
-    print('Pentru random scrie \'random\', iar pentru exemplu mic scrie \'mic\'')
-    tip = input()
-    if(tip == 'random'):
-        print('Introduceti dimensiunea matricei:')
-        n = int(input())
-        print('Introduceti epsilon:')
-        epsilon = float(input())
-        A = np.random.rand(n, n) * 10  
+def example_custom_diagonals(tip=None, n=None, epsilon=None, A=None, dU=None, b=None):
+    if tip is None:
+        print('Pentru random scrie \'random\', iar pentru exemplu mic scrie \'mic\'')
+        tip = input()
+    if tip == 'random':
+        if n is None:
+            print('Introduceti dimensiunea matricei:')
+            n = int(input())
+        if epsilon is None:
+            print('Introduceti epsilon:')
+            epsilon = float(input())
+        if A is None:
+            A = np.random.rand(n, n) * 10  
         A_original = A.copy()  
         print("Matricea A initiala este:\n", A)
-        
-        dU = np.random.rand(n) * 10 + epsilon  
+        if dU is None:
+            dU = np.random.rand(n) * 10 + epsilon  
         print("Diagonala U este: ", dU)
-        
-        b = np.random.rand(n) * 10  
+        if b is None:
+            b = np.random.rand(n) * 10  
         print("Vectorul b este: ", b)
-    
     else: 
-        if(tip == 'mic'):
+        if tip == 'mic':
             n = 3
             A = np.array([
                 [4.0, 0.0, 4.0],
