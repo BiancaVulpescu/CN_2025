@@ -11,7 +11,7 @@ const Tema6 = () => {
       const res = await fetch('http://localhost:5000/tema6-output', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}), // No input needed for default run
+        body: JSON.stringify({}),
       });
       const data = await res.json();
       setOutput(data.output);
