@@ -10,6 +10,9 @@ from tema3 import tema3
 from tema4 import main
 from tema5 import main as main5
 from tema6 import main as main6
+from tema7 import main as main7
+from tema8 import run_tests
+
 app = Flask(__name__)
 CORS(app)
 
@@ -82,6 +85,28 @@ def get_tema6_output():
     sys.stdout = buffer
 
     main6()
+
+    sys.stdout = sys.__stdout__
+    output = buffer.getvalue()
+    return jsonify({"output": output})
+
+@app.route('/tema7-output', methods=['POST'])
+def get_tema7_output():
+    buffer = io.StringIO()
+    sys.stdout = buffer
+
+    main7()
+
+    sys.stdout = sys.__stdout__
+    output = buffer.getvalue()
+    return jsonify({"output": output})
+
+@app.route('/tema8-output', methods=['POST'])
+def get_tema8_output():
+    buffer = io.StringIO()
+    sys.stdout = buffer
+
+    run_tests()
 
     sys.stdout = sys.__stdout__
     output = buffer.getvalue()
